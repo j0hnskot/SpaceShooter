@@ -97,7 +97,7 @@ function create() {
 	//create enemy bullet group
 	enemy_bullets=game.add.group();
 	// enemy_bullets.enableBody=true;
-	// enemy_bullets.createMultiple(200,'enemy_bullet');
+	// enemy_bullets.createMultiple(200,'');
 	
 	//create sounds for firing ,damage and death
 	//create music
@@ -177,7 +177,7 @@ function addEnemy(){
 function playerDamaged(player,bullet){
 	bullet.kill();
 	
-	player.damage(1); 
+	//player.damage(1); 
 	if (!player.alive){
 		invisible_line.kill();
 	}
@@ -191,16 +191,16 @@ function enemyTouched(player,enemy){
 	//damage enemy for spesific amount
 	enemy.damage(1);
 	//damage player for specific amount 
-	player.damage(1)
-	console.log('touched')
+	//player.damage(1)
+	//console.log('touched')
 	//call removeLife if needed
 
 }
 function enemyDamaged(enemy,bullet){
 
 	bullet.kill();
-	console.log('hit');
-	console.log(enemy);
+	//console.log('hit');
+	//console.log(enemy);
 	enemy.damage(1);
 	score++;
 //calculate how much damage the enemy took 
@@ -212,7 +212,7 @@ function enemyDamaged(enemy,bullet){
 function playerShoot(){
 	player.shooting=true;
 	if (player.alive && player.lastTimeFired < game.time.now - player.rateOfFire) {
-			console.log('player shoot');
+			//console.log('player shoot');
 
 		var bullet=new Bullet(game,player.x,player.y-82,'player')
 		// bullet.checkWorldBounds=true;
@@ -229,14 +229,21 @@ function playerStopShoot(){
 function enemyShoot(x,enemy){
 	
  if (enemy.lastTimeFired < game.time.now - enemy.rateOfFire) {
-  
-var bullet=new Bullet(game,enemy.x+40,enemy.y+59,'enemy')
+ 	if(enemy_bullets.countDead()==0){
+
+	var bullet=new Bullet(game,enemy.x+40,enemy.y+59,'enemy')
 // var bullet=enemy_bullets.getFirstDead();
 // bullet.checkWorldBounds=true;
 // bullet.outOfBoundsKill= true;
 // bullet.reset(enemy.x+40,enemy.y+59);
 // bullet.body.velocity.y=400;
-enemy_bullets.add(bullet);
+	enemy_bullets.add(bullet)
+}else{
+	var bullet=enemy_bullets.getFirstDead();
+	bullet.reset(game,enemy.x+40,enemy.y+59,'enemy');
+	bullet.checkWorldBounds=true;
+    bullet.outOfBoundsKill= true;
+}
     enemy.lastTimeFired = game.time.now;
     console.log('dead enemy bullets');
     console.log(enemy_bullets.countLiving());
