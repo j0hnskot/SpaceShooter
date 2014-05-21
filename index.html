@@ -3,7 +3,10 @@
 <head> 
 	<meta charset="UTF-8" />
     <title>Space shooter with the phaser engine</title>
-	<script type="text/javascript" src="js/phaser.min.js"></script>
+	<script type="text/javascript" src="js/phaser.js"></script>
+	<script type="text/javascript" src="js/enemy.js"></script>
+	<script type="text/javascript" src="js/player.js"></script>
+	<script type="text/javascript" src="js/bullet.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -49,31 +52,33 @@ var fpsText;
 
 function create() {
 	//start physics
-	game.physics.startSystem(Phaser.Physics.ARCADE);
+	game.world.setBounds(0, 0, 2480, 1100);
 	
+	game.physics.startSystem(Phaser.Physics.ARCADE);
 	//create score
 	
 	
 	
 	//create background
 	var background=game.add.sprite(0, 0, 'background');
-	
+	player=new Player(game);
+	game.add.existing(player);
 	//create player ship
-	player=game.add.sprite(200,200,'player_ship');
-	player.anchor.set(0.5);
-	player.scale.setTo(0.5,0.5);
-	 game.physics.arcade.enable(player);
-	 player.health=10;
-	 player.rateOfFire=250;
-	 player.lastTimeFired=0;
-	player.shooting=false;
-	player.invicibility=0;
+	// player=game.add.sprite(200,200,'player_ship');
+	// player.anchor.set(0.5);
+	// player.scale.setTo(0.5,0.5);
+	//  game.physics.arcade.enable(player);
+	//  player.health=10;
+	//  player.rateOfFire=250;
+	//  player.lastTimeFired=0;
+	// player.shooting=false;
+	// player.invicibility=0;
 
 		//create player bullet group
 	player_bullets=game.add.group();
-	player_bullets.enableBody=true
+	//player_bullets.enableBody=true
 
-	player_bullets.createMultiple(20,'player_bullet');
+	//player_bullets.createMultiple(20,'player_bullet');
 	
 	//create player invisible line 
 	invisible_line=game.add.sprite(0,0);
@@ -82,17 +87,17 @@ function create() {
 	game.physics.arcade.enable(invisible_line);
 	//create enemy ship group
 	enemies=game.add.group();
-	enemies.enableBody=true;
-	enemies.createMultiple(20,'enemy_ship');
+	//enemies.enableBody=true;
+	//enemies.createMultiple(20,'enemy_ship');
 	//assign rate of fire to control how many times per second the enemies will shoot the player
-	enemies.setAll('rateOfFire',250,false,false,0,true);
-	enemies.setAll('lastTimeFired',0,false,false,0,true);
+	//enemies.setAll('rateOfFire',250,false,false,0,true);
+	//enemies.setAll('lastTimeFired',0,false,false,0,true);
 	//enemy spawn timer 
 	timer=game.time.events.loop(spawnTime, addEnemy, this);
 	//create enemy bullet group
 	enemy_bullets=game.add.group();
-	enemy_bullets.enableBody=true;
-	enemy_bullets.createMultiple(200,'enemy_bullet');
+	// enemy_bullets.enableBody=true;
+	// enemy_bullets.createMultiple(200,'enemy_bullet');
 	
 	//create sounds for firing ,damage and death
 	//create music
@@ -155,18 +160,18 @@ function render(){
 
 
 function addEnemy(){
-	var x=((Math.random() * 400)+1); ;
-	var y=-120;
-
+	
+	var enemy=new Enemy(game);
+	enemies.add(enemy);
 	   
 	//enemy.rateOfFire=250;
 
-	enemy=enemies.getFirstDead();
-	 enemy.reset(x,y);
-	 enemy.health=3;
-	enemy.body.velocity.y=40;
-	enemy.checkWorldBounds=true;
-     enemy.outOfBoundsKill= true;
+	// enemy=enemies.getFirstDead();
+	//  enemy.reset(x,y);
+	//  enemy.health=3;
+	// enemy.body.velocity.y=40;
+	// enemy.checkWorldBounds=true;
+ //     enemy.outOfBoundsKill= true;
 	
 }
 function playerDamaged(player,bullet){
@@ -187,13 +192,15 @@ function enemyTouched(player,enemy){
 	enemy.damage(1);
 	//damage player for specific amount 
 	player.damage(1)
-	
+	console.log('touched')
 	//call removeLife if needed
 
 }
 function enemyDamaged(enemy,bullet){
 
 	bullet.kill();
+	console.log('hit');
+	console.log(enemy);
 	enemy.damage(1);
 	score++;
 //calculate how much damage the enemy took 
@@ -205,11 +212,14 @@ function enemyDamaged(enemy,bullet){
 function playerShoot(){
 	player.shooting=true;
 	if (player.alive && player.lastTimeFired < game.time.now - player.rateOfFire) {
-		var bullet=player_bullets.getFirstDead();
-		bullet.checkWorldBounds=true;
-		bullet.outOfBoundsKill= true;
-		bullet.reset(player.x,player.y-82);
-		bullet.body.velocity.y=-400;
+			console.log('player shoot');
+
+		var bullet=new Bullet(game,player.x,player.y-82,'player')
+		// bullet.checkWorldBounds=true;
+		// bullet.outOfBoundsKill= true;
+		// bullet.reset(player.x,player.y-82);
+		// bullet.body.velocity.y=-400;
+		player_bullets.add(bullet);
 		player.lastTimeFired=game.time.now;
 	}
 }
@@ -220,13 +230,16 @@ function enemyShoot(x,enemy){
 	
  if (enemy.lastTimeFired < game.time.now - enemy.rateOfFire) {
   
-
-var bullet=enemy_bullets.getFirstDead();
-bullet.checkWorldBounds=true;
-bullet.outOfBoundsKill= true;
-bullet.reset(enemy.x+40,enemy.y+59);
-bullet.body.velocity.y=400;
+var bullet=new Bullet(game,enemy.x+40,enemy.y+59,'enemy')
+// var bullet=enemy_bullets.getFirstDead();
+// bullet.checkWorldBounds=true;
+// bullet.outOfBoundsKill= true;
+// bullet.reset(enemy.x+40,enemy.y+59);
+// bullet.body.velocity.y=400;
+enemy_bullets.add(bullet);
     enemy.lastTimeFired = game.time.now;
+    console.log('dead enemy bullets');
+    console.log(enemy_bullets.countLiving());
   }
 
 }
