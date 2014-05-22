@@ -11,14 +11,14 @@ Bullet = function (game,x,y,type){
 
 	
 	Phaser.Sprite.call(this, game, x, y, key);
+	this.checkWorldBounds=true;
+    this.outOfBoundsKill= true;
 	game.physics.arcade.enable(this);
 
 	this.alive=true;
 	this.body.velocity.y=velocity;
-	this.checkWorldBounds=true;
-    this.outOfBoundsKill= true;
-    console.log(key +' bullet called');
-    console.log(x + ' ' +y);
+	
+ // console.log(this);
 
 }
 

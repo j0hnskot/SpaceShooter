@@ -16,10 +16,15 @@ Enemy = function (game){
 	this.body.velocity.y=40;
 	this.checkWorldBounds=true;
     this.outOfBoundsKill= true;
-    console.log('called');
-    console.log(x + ' ' +y);
+    this.weapon=new Weapon();
+  
 
 }
 
 Enemy.prototype = Object.create(Phaser.Sprite.prototype);
 Enemy.prototype.constructor = Enemy;
+
+Enemy.prototype.setWeapon = function(weapon){
+
+ 	this.weapon=new Weapon(weapon);
+ };
