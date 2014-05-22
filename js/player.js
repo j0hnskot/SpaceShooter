@@ -1,6 +1,7 @@
 Player = function (game){
-	this.game=game;
+	//this.game=game;
 	this.sprite=null;
+	this.call=game.state.callbackContext;
 
 	this.x=200 ;
 	this.y=200;
@@ -9,13 +10,13 @@ Player = function (game){
 // 	this.anchor.set(0.5);
 // 	this.scale.setTo(0.5,0.5);
 // 	this.alive=true;
-	this.rateOfFire=250;
+	//this.rateOfFire=250;
 	this.lastTimeFired=0;
 	
 	this.shooting=false;
 	this.invicibility=0;
 // 	game.physics.arcade.enable(this);
- 	this.weapon=new Weapon();
+ 	this.weapon=new Weapon('1');
 // console.log(this.weapon);	
 	
  }
@@ -35,7 +36,12 @@ create: function(){
 
 },
 update: function(){
-	if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) > 8)
+
+		if(this.shooting){
+			this.shoot();
+		}
+ 
+	if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) >10)
     {
         //  Make the object seek to the active pointer (mouse or touch).
         game.physics.arcade.moveToPointer(this.sprite, 300);
@@ -63,7 +69,7 @@ shoot: function(){
 		//console.log(this);
 		//	console.log();
 		//this.game.state.states.game.player_bullets.add(bullet);
-		game.state.callbackContext.player_bullets.add(bullet);
+		//game.state.callbackContext.player_bullets.add(bullet);
 		//player_bullets
 		this.lastTimeFired=game.time.now;
 
@@ -74,7 +80,19 @@ stopShoot: function(){
 	this.shooting=false;
 },
 
- 
+ damaged: function(player,bullet){
+	bullet.kill();
+	player.damage(bullet.damage); 
+	if (!player.alive){
+		game.state.start('menu');
+	}
+
+	console.log(player.health);
+	//console.log(player);
+	//calculate how much damage the player took 
+	//call removeLife if needed
+},
+
 
 
 };
