@@ -1,4 +1,4 @@
-Player = function (game){
+var Player = function (game){
 	//this.game=game;
 	this.sprite=null;
 	this.call=game.state.callbackContext;
@@ -18,6 +18,7 @@ Player = function (game){
 // 	game.physics.arcade.enable(this);
 
  	this.weapon;
+ 	this.state;
 // console.log(this.weapon);	
 	
  }
@@ -29,6 +30,7 @@ preload: function(){
 
 },
 create: function(){
+	this.state=game.state.getCurrentState();
 	this.weapon=new Weapon(localStorage.getItem('equippedWeapon'));
 	this.sprite=game.add.sprite(this.x,this.y,'player_ship');
 	this.sprite.anchor.set(0.5);
@@ -40,22 +42,23 @@ create: function(){
 
 },
 update: function(){
-
+	if (this.sprite.alive){
 		if(this.shooting){
-			this.shoot();
-		}
- 
-	if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) >10)
-    {
-        //  Make the object seek to the active pointer (mouse or touch).
-        game.physics.arcade.moveToPointer(this.sprite, 300);
-      	game.state.callbackContext.invisible_line.x=this.sprite.x;
-    }
-    else
-    {
-        //  Otherwise turn off velocity because we're close enough to the pointer
-        this.sprite.body.velocity.set(0);
-    }
+				this.shoot();
+			}
+	 
+		if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) >10)
+	    {
+	        //  Make the object seek to the active pointer (mouse or touch).
+	        game.physics.arcade.moveToPointer(this.sprite, 300);
+	      	game.state.callbackContext.invisible_line.x=this.sprite.x;
+	    }
+	    else
+	    {
+	        //  Otherwise turn off velocity because we're close enough to the pointer
+	        this.sprite.body.velocity.set(0);
+	    }
+	}
 },
 
 shoot: function(){
@@ -85,11 +88,26 @@ stopShoot: function(){
 	this.shooting=false;
 },
 
+dead: function(){
+	console.log('died');
+	this.state.emitter.x = this.sprite.x;
+    this.state.emitter.y = this.sprite.y;
+
+    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
+    //  The second gives each particle a 2000ms lifespan
+    //  The third is ignored when using burst/explode mode
+    //  The final parameter (10) is how many particles will be emitted in this single burst
+    this.state.emitter.start(false, 1000, 50, 50);
+	
+   // this.emitter.gravity = 200;
+},
+
  damaged: function(player,bullet){
 	bullet.kill();
 	player.damage(bullet.damage); 
 	if (!player.alive){
-		game.state.start('menu');
+		this.dead();
+		//game.state.start('menu');
 	}
 	//console.log(game.state.callbackContext.hud);
 	game.state.callbackContext.hud.updateHealth();

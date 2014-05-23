@@ -1,6 +1,6 @@
 Enemy = function (game){
 	this.sprite=null
-	this.call=game.state.callbackContext;
+	
 
  }
 
@@ -71,6 +71,7 @@ shoot: function(x,enemy){
 },
 
 damaged: function(enemy,bullet){
+	var state=game.state.getCurrentState();
 //increase score
 score+=bullet.damage;
 	scoreText.text='Score: '+score;
@@ -80,6 +81,16 @@ score+=bullet.damage;
 
 	//damage enemy
 	enemy.damage(bullet.damage);
+	if(!enemy.alive){
+	state.emitter.x = enemy.x;
+    state.emitter.y = enemy.y;
+
+    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
+    //  The second gives each particle a 2000ms lifespan
+    //  The third is ignored when using burst/explode mode
+    //  The final parameter (10) is how many particles will be emitted in this single burst
+    state.emitter.start(false, 500, 40, 10);
+	}
 	
 
 

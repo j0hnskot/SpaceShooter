@@ -5,6 +5,8 @@ this.sprite;
 this.menu;
 this.types;
 this.weapon=new Weapon();
+this.tech_tree_objects;
+this.state;
 //this.types=weapon.getAllTypes();
 }
 
@@ -18,31 +20,47 @@ preload: function(){
   	game.load.image('window','assets/menu/window.png');
   	game.load.image('close_button','assets/menu/close_button.png');
 	game.load.image('play_button','assets/play_button.png');
+	game.load.image('tech_tree_button','assets/tech_tree_button.png');
 },
 
 
 
 create: function(){
+	this.state=game.state.getCurrentState();
+	this.tech_tree_objects=game.add.group();
 	
 	 this.menu=game.add.sprite(game.width/2,game.height/2,'window');
 	 this.menu.anchor.setTo(0.5,0.5);
-	 this.menu.visible=false;
+	 this.tech_tree_objects.add(this.menu);
+
+	 this.back_button=game.add.button(10,20	,'back_button',this.returnToMenu,this);
+	  this.tech_tree_objects.add(this.back_button);
+
 	 this.close_button=game.add.button(this.menu.x+this.menu.width/2-15,this.menu.y-this.menu.height/2+15	,
 	 	'close_button',this.closeMenu,this.close_button);
 	 this.close_button.anchor.setTo(0.5,0.5);
-	 this.close_button.visible=false;
+	  this.tech_tree_objects.add(this.close_button);
+	
 	 this.rateOfFireText=game.add.text(this.menu.x,this.menu.y,'11',{fontSize:'20px',fill:'#ffffff'});
 	 this.rateOfFireText.anchor.setTo(0.5,0.5);
-	 this.rateOfFireText.visible=false;
+	  this.tech_tree_objects.add(this.rateOfFireText);
+	
 	 this.damageText=game.add.text(this.menu.x,this.menu.y+30,'11',{fontSize:'22px',fill:'#ffffff'});
 	 this.damageText.anchor.setTo(0.5,0.5);
-	 this.damageText.visible=false;
+	  this.tech_tree_objects.add(this.damageText);
+	
 	 this.costText=game.add.text(this.menu.x,this.menu.y+60,'11',{fontSize:'22px',fill:'#ffffff'});
 	 this.costText.anchor.setTo(0.5,0.5);
-	 this.costText.visible=false;
+	  this.tech_tree_objects.add(this.costText);
+	
 	 this.button=game.add.sprite(150,350, 'play_button');
-	 this.button.visible=false;
-	 this.button.inputEnabled=true;
+	  this.button.inputEnabled=true;
+	   this.tech_tree_objects.add(this.button);
+
+
+	   this.tech_tree_objects.setAll('visible',false);
+
+
 	// console.log(this.types.name);
 	// for (var key of this.types){
 	// 	console.log(key.rateOfFire);
@@ -61,12 +79,12 @@ create: function(){
 closeMenu : function(){
 	//game.state.start('game');
 	var state=game.state.getCurrentState();
-	game.state.callbackContext.menu.visible=false;
-	game.state.callbackContext.close_button.visible=false;
-	game.state.callbackContext.rateOfFireText.visible=false;
-	state.damageText.visible=false;
-	game.state.callbackContext.costText.visible=false;
-	state.button.visible=false;
+	state.tech_tree.menu.visible=false;
+	state.tech_tree.close_button.visible=false;
+	state.tech_tree.rateOfFireText.visible=false;
+	state.tech_tree.damageText.visible=false;
+	state.tech_tree.costText.visible=false;
+	state.tech_tree.button.visible=false;
 	
 
 },
@@ -77,7 +95,18 @@ buy: function(){
 	
 
 },
+
+returnToMenu: function(){
+	
+	this.tech_tree_objects.setAll('visible',false);
+	this.state.menu_objects.setAll('visible',true);
+
+},
 showTechTree: function(){
+var state=game.state.getCurrentState();
+	// state.tech_tree_button.visible=false;
+	// state.start_button.visible=false;
+	this.back_button.visible=true;
 	this.types=this.weapon.getAllTypes();
 	for(var i=0;i<this.types.length;i++){
 		 
@@ -94,8 +123,8 @@ showTechTree: function(){
  		this.sprite.anchor.setTo(0.5,0.5);
 		// console.log(this.types[i]);
 		// console.log(i);
-		this.sprite.visible=false;
-		
+		// this.sprite.visible=false;
+		this.tech_tree_objects.add(this.sprite);
 		console.log(this.weapon.rateOfFire);
 	}
 
@@ -106,13 +135,12 @@ description: function(item){
 	console.log(item.rateOfFire);
 
 	this.rateOfFireText.text='Rate of fire: '+ item.rateOfFire;
-	this.rateOfFireText.visible=true
+
 	this.damageText.text='Damage: '+ item.damage;
-	this.damageText.visible=true
+	
 	this.costText.text='Cost: '+ item.cost;
-	this.costText.visible=true;
-	this.menu.visible=true;
-	this.close_button.visible=true;
+	this.tech_tree_objects.setAll('visible',true);
+	
 	if(localStorage.getItem('got'+item.type)=='false'){
 		this.button.type=item.type;
 		this.button.cost=item.cost;
@@ -124,6 +152,7 @@ description: function(item){
 		console.log(localStorage.getItem('got'+item.type));
 		console.log('owned');
 	}
+
 
 }
 

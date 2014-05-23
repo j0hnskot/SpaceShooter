@@ -15,21 +15,24 @@ this.hud=new Hud(game);
 this.powerUp=new Powerup(game);
 this.weapon=new Weapon();
 this.types;
+this.emitter
+
 }
 
 game_state.prototype={
 preload: function(){
 // game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-     game.scale.setShowAll();
-    game.scale.setScreenSize();
-    this.player.preload();
-  	this.enemy.preload();
-  	this.powerUp.preload();
-    game.load.image('player_bullet', 'assets/bullet.png');
-      game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
-     game.load.image('background', 'assets/sky.png');
-    
-
+	game.scale.setShowAll();
+	game.scale.setScreenSize();
+	this.player.preload();
+	this.enemy.preload();
+	this.powerUp.preload();
+	game.load.image('player_bullet', 'assets/bullet.png');
+	game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
+	game.load.image('background', 'assets/sky.png');
+	game.load.image('explosion0', 'assets/explosion0.png');
+	game.load.image('explosion1', 'assets/explosion1.png');
+	game.load.image('explosion2', 'assets/explosion2.png');
   //   game.load.spritesheet('bird', 'assets/birdsheet.png',34,24);
   //   game.load.image('pipe-top','assets/pipe-top.png');
   //   game.load.image('pipe-bot','assets/pipe-bot.png');
@@ -83,7 +86,21 @@ create: function() {
 	// enemy_bullets.enableBody=true;
 	// enemy_bullets.createMultiple(200,'');
 	
+	//create effects for firing ,damage and death
+	this.emitter = game.add.emitter(300,200, 100);
+    this.emitter.makeParticles(['explosion0','explosion1','explosion2']);
+    this.emitter.gravity=0;
+    
+    //this.emitter.lifespan=2000;
+    this.emitter.minRotation = 0;
+      this.emitter.setAlpha(0.1, 0.1)
+    this.emitter.maxRotation = 0;
+ 	this.emitter.maxParticleSpeed=1;
+   
+       // this.emitter.start(false, 1000, 50, 30);
+
 	//create sounds for firing ,damage and death
+
 	//create music
 
 	//score 
@@ -104,12 +121,17 @@ create: function() {
 
 update: function() {
 
+	this.emitter.forEachAlive(function(particle)
+{
+    particle.alpha = game.math.clamp(particle.lifespan / 1000, 0, 1);
+}, this);
+
       //  If the sprite is > 8px away from the pointer then let's move to it
    this.hud.update();
    this.player.update();
  
  //check for overlap between player ship - enemy bullets  and calculate damage 
-  game.physics.arcade.overlap(this.enemy_bullets, this.player.sprite, this.player.damaged, null, this.player.sprite);
+  game.physics.arcade.overlap(this.enemy_bullets, this.player.sprite, this.player.damaged, null, this.player);
  //check for overlap between player ship - enemy ship and calculate damage
  game.physics.arcade.overlap(this.player.sprite, this.enemies, this.enemy.touched, null, this)
  //check for overlap between enemy ship - player bullets and calculate score and damage (call enemyDamaged)
