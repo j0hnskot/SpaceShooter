@@ -13,6 +13,8 @@ this.player=new Player(game);
 this.enemy=new Enemy(game);
 this.hud=new Hud(game);
 this.powerUp=new Powerup(game);
+this.weapon=new Weapon();
+this.types;
 }
 
 game_state.prototype={
@@ -63,16 +65,19 @@ create: function() {
 	//player_bullets.createMultiple(20,'player_bullet');
 	
 	//create player invisible line 
-	this.invisible_line=game.add.sprite(0,0,'enemy_bullet');
+	this.invisible_line=game.add.sprite(0,0,'');
 	this.invisible_line.scale.y=800;
 	
 	game.physics.arcade.enable(this.invisible_line);
 	//create enemy ship group
 	this.enemies=game.add.group();
+	//create power up group
 	this.powerUps=game.add.group();
+	//call the power up's random creation timer
+	this.powerUp.create();
 	//enemy spawn timer 
 	timer=game.time.events.loop(this.spawnTime, this.addEnemy, this);
-	this.powerUp.create();
+	
 	//create enemy bullet group
 	this.enemy_bullets=game.add.group();
 	// enemy_bullets.enableBody=true;
@@ -80,9 +85,10 @@ create: function() {
 	
 	//create sounds for firing ,damage and death
 	//create music
-	//create life bar
-	//score 
 
+	//score 
+	this.types=this.weapon.getAllTypes();
+	console.log(this.types);
 	this.hud.create();
 	this.hud.fpsEnabled=true;
 	// score=0;

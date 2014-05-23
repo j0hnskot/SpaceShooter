@@ -1,19 +1,23 @@
 Weapon = function (type){
 	var type;
+	this.rateOfFire;
+	this.damage;
+	this.cost;
 	if(typeof(type)==='undefined'){
-		this.type='default';
+		this.type='typeZero';
 	}else{
 		this.type=type;
 	}
 	
 	switch(this.type){
-		case 'default':
-			this.rateOfFire=250;
-			this.damage=1;
+		case 'typeZero':
+			this.typeZero();
 			break;
-		case '1':
-			this.rateOfFire=50;
-			this.damage=2;
+		case 'typeOne':
+			this.typeOne();
+			break;
+		case 'typeTwo':
+			this.typeTwo();
 			break;
 
 	}
@@ -21,5 +25,40 @@ Weapon = function (type){
 
 }
 
-Weapon.prototype = Object.create(null);
-Weapon.prototype.constructor = Weapon;
+Weapon.prototype={
+
+getAllTypes: function(){
+//this.listOfTypes={name:['default','typeOne','typeTwo'],rateOfFire:[11,11,12]};
+this.listOfTypes=['typeZero','typeOne','typeTwo'];
+
+return this.listOfTypes;
+},
+
+
+typeZero: function(){
+
+this.rateOfFire=250;
+this.damage=1;
+this.cost=100;
+this.key='typeZero';
+
+},
+
+typeOne: function(){
+	this.rateOfFire=100;
+	this.damage=1;
+	this.cost=100;
+	this.key='typeOne';
+},
+
+typeTwo: function(){
+	this.rateOfFire=120;
+	this.damage=2;
+	this.cost=200;
+	this.key='typeTwo';
+},
+
+};
+
+// Weapon.prototype = Object.create(null);
+// Weapon.prototype.constructor = Weapon;

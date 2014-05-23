@@ -15,7 +15,7 @@ preload: function(){
 },
 
 create : function(){
-	this.timer=game.time.events.loop(1000, this.addRandom, this);
+	this.timer=game.time.events.loop(4000, this.addRandom, this);
 },
 
 update: function(){
@@ -24,9 +24,9 @@ update: function(){
 },
 
 addRandom: function(){
-console.log('random added');
+
 this.randomNumber=Math.round(Math.random()*10);
-console.log(this.randomNumber);
+
 this.x=((Math.random() * 400)+1); ;
 this.y=-10;
 	//this.sprite=Phaser.Sprite.call(this, game, this.x, this.y, 'enemy_ship');
@@ -52,8 +52,13 @@ this.y=-10;
 apply :function(player,powerUp){
 	switch (powerUp.randomNumber){
 		case 1:
-			player.health=500;
-			console.log(player.health);
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			player.health+=10;
+			player.powerUpDuration=5000;
+			game.state.callbackContext.hud.updateHealth();
 			break;
 		default:
 			break;
@@ -61,7 +66,7 @@ apply :function(player,powerUp){
 	}
 	
 	powerUp.kill();
-	console.log('applied')
+	
 }
  
 

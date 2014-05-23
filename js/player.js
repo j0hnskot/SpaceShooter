@@ -16,7 +16,8 @@ Player = function (game){
 	this.shooting=false;
 	this.invicibility=0;
 // 	game.physics.arcade.enable(this);
- 	this.weapon=new Weapon('1');
+
+ 	this.weapon;
 // console.log(this.weapon);	
 	
  }
@@ -24,15 +25,18 @@ Player.prototype={
 
 preload: function(){
  game.load.image('player_ship', 'assets/spaceship.png');
+ game.load.audio('shoot', 'assets/sound/Laser1.wav');
 
 },
 create: function(){
+	this.weapon=new Weapon(localStorage.getItem('equippedWeapon'));
 	this.sprite=game.add.sprite(this.x,this.y,'player_ship');
 	this.sprite.anchor.set(0.5);
 	this.sprite.scale.setTo(0.5,0.5);
 	this.sprite.alive=true;
 	this.sprite.health=10;
 	game.physics.arcade.enable(this.sprite);
+	this.shoot_sound = game.add.audio('shoot');
 
 },
 update: function(){
@@ -72,6 +76,7 @@ shoot: function(){
 		//game.state.callbackContext.player_bullets.add(bullet);
 		//player_bullets
 		this.lastTimeFired=game.time.now;
+//		this.shoot_sound.play();
 
 	}
 },
@@ -86,8 +91,9 @@ stopShoot: function(){
 	if (!player.alive){
 		game.state.start('menu');
 	}
-
-	console.log(player.health);
+	//console.log(game.state.callbackContext.hud);
+	game.state.callbackContext.hud.updateHealth();
+	//console.log(player.health);
 	//console.log(player);
 	//calculate how much damage the player took 
 	//call removeLife if needed

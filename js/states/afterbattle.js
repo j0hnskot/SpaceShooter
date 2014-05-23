@@ -1,13 +1,12 @@
-var menu_state= function(game){
+var after_battle_state= function(game){
 
 this.menu_button;
 this.tech_tree_button
-this.tech_tree=new tech_tree_state();
 }
 
 
 
-menu_state.prototype={
+after_battle_state.prototype={
 
 preload: function(){
 		game.scale.setShowAll();
@@ -18,7 +17,6 @@ preload: function(){
 
 
 create: function(){
-
 if(localStorage.getItem('spaceShooter.firstRun')===null){
 	localStorage.setItem('spaceShooter.firstRun','true');
 }
@@ -33,23 +31,18 @@ if(localStorage.getItem('spaceShooter.firstRun')=='true'){
 	console.log('first run');
 }
 	
-this.startMenu()
-this.tech_tree.create();
+
+this.start_button = game.add.button(game.width/2,game.height/2, 'play_button', this.startGame,this.button);
+ this.start_button.anchor.setTo(0.5,0.5);
+ this.tech_tree_button = game.add.button(game.width/2,game.height/2+100, 'play_button', this.startTechTree,this.button);
+ this.tech_tree_button.anchor.setTo(0.5,0.5);
 },
 
 startGame : function(){
 	game.state.start('game');
 },
 
-startMenu: function(){
-	this.start_button = game.add.button(game.width/2,game.height/2, 'play_button', this.startGame,this.button);
- this.start_button.anchor.setTo(0.5,0.5);
- this.tech_tree_button = game.add.button(game.width/2,game.height/2+100, 'play_button', this.tech_tree.showTechTree,this.button);
- this.tech_tree_button.anchor.setTo(0.5,0.5);
-},
-
 startTechTree: function(){
-
 	game.state.start('tech_tree');
 },
 

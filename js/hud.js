@@ -4,6 +4,7 @@ Hud = function (game){
 	this.fpsText
 	this.enabled=true;
 	this.fpsEnabled=false;
+	this.healthText;
 
  }
 
@@ -18,8 +19,11 @@ preload: function(){
 create : function(){
 if(game.state.current==='game'){
 	score=0;
+	//create life bar
+	this.healthText=game.add.text(16,game.height-40,'Health: '+game.state.callbackContext.player.sprite.health,{fontSize:'32px',fill:'#ffffff'});
 }
-scoreText = game.add.text(16, 16, '', { fontSize: '32px', fill: '#000' });
+
+scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 	//fps
 	  game.time.advancedTiming = true;
    		this.fpsText = game.add.text(
@@ -30,15 +34,19 @@ scoreText = game.add.text(16, 16, '', { fontSize: '32px', fill: '#000' });
 
 update: function(){
 	if(this.enabled){
-		scoreText.text = 'Score: ' + score; 
+	//	scoreText.text = 'Score: ' + score; 
+	//	healthText.text='Health: ' +game.state.callbackContext.player.sprite.health;
 		if (game.time.fps !== 0 && this.fpsEnabled) {
 			this.fpsText.setText(game.time.fps + ' FPS');
 		}
 	}
 
+
 },
 
-
+updateHealth: function(){
+	this.healthText.text='Health: '+game.state.callbackContext.player.sprite.health;
+},
  
 
 

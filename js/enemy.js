@@ -73,6 +73,7 @@ shoot: function(x,enemy){
 damaged: function(enemy,bullet){
 //increase score
 score+=bullet.damage;
+	scoreText.text='Score: '+score;
 	bullet.kill();
 	//console.log('hit');
 	//console.log(enemy);
