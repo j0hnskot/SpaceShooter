@@ -7,7 +7,7 @@ Enemy.prototype={
 
 preload: function(){
     game.load.image('enemy_ship', 'assets/enemy_ship.png');
-
+	game.load.image('enemy_ship_2', 'assets/enemy_ship_2.png');
 
 },
 
@@ -15,33 +15,63 @@ createEnemy : function(){
 
 
 },
-addEnemy: function(){
+addEnemy: function(type){
+	var state=game.state.callbackContext;
 	this.x=((Math.random() * 400)+1); ;
 	this.y=-100;
-	//this.sprite=Phaser.Sprite.call(this, game, this.x, this.y, 'enemy_ship');
-	if(game.state.callbackContext.enemies.countDead()==0){
-		this.sprite=game.add.sprite(this.x,this.y,'enemy_ship');
-	}else{
 
+	this.selectedEnemy=this.selectEnemy();
+	
+	
+	if(state.enemies.countDead()==0){
+		
+		this.sprite=game.add.sprite(this.x,this.y,this.selectedEnemy.key);
+		console.log('peos');
+	}else{
+		console.log('yolo');
 		this.sprite=game.state.callbackContext.enemies.getFirstDead();
+		this.sprite.loadTexture(this.selectedEnemy.key);
 		this.sprite.reset(this.x,this.y);
 	//	console.log('revived');
 	}
 	
 	this.sprite.anchor.set(0.5);
-	//this.sprite.scale.setTo(0.5,0.5);
+	
 	this.sprite.alive=true;
-	this.sprite.health=3;
+	this.sprite.health=this.selectedEnemy.health;
 	this.sprite.lastTimeFired=0;
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.checkWorldBounds=true;
 	this.sprite.outOfBoundsKill=true;
-	this.sprite.body.velocity.y=100;
-	this.sprite.weapon=new Weapon();
+	this.sprite.body.velocity.y=(Math.random() * 200)+1;
+	this.sprite.weapon=new Weapon(this.selectedEnemy.weapon);
 	game.state.callbackContext.enemies.add(this.sprite);
-	//console.log(this.sprite.body);
-	//console.log(game.state.callbackContext.enemies.countLiving());
-	//console.log(game.state.callbackContext.enemies.countDead());
+	
+},
+
+selectEnemy: function(){
+	var numberOfEnemies=3
+	var randomNumber=Math.round((Math.random()*numberOfEnemies));
+	var selectedEnemy;
+	switch (randomNumber){
+		case 1:
+		selectedEnemy={
+			health:10,
+			weapon:'typeTwo',
+			key:'enemy_ship'
+		}
+		break;
+		default:
+		selectedEnemy={
+			health:3,
+			weapon:'typeZero',
+			key:'enemy_ship_2'
+		}
+		break;
+
+	}
+	return selectedEnemy;
+
 },
 update: function(){
 	
@@ -53,17 +83,7 @@ shoot: function(x,enemy){
 	if (enemy.alive && enemy.lastTimeFired < game.time.now - enemy.weapon.rateOfFire) {
 			
 
-		var bullet=new Bullet(game,enemy.x,enemy.y+59,'enemy')
-		bullet.damage=enemy.weapon.damage;
-		// bullet.checkWorldBounds=true;
-		// bullet.outOfBoundsKill= true;
-		// bullet.reset(player.x,player.y-82);
-		// bullet.body.velocity.y=-400;
-		//console.log(this);
-		//	console.log();
-		//this.game.state.states.game.player_bullets.add(bullet);
-		//game.state.callbackContext.enemy_bullets.add(bullet);
-		//player_bullets
+		var bullet=new Bullet(game,enemy.x,enemy.y+59,enemy.weapon,'enemy')
 		enemy.lastTimeFired=game.time.now;
 
 	}
@@ -76,9 +96,7 @@ damaged: function(enemy,bullet){
 score+=bullet.damage;
 	scoreText.text='Score: '+score;
 	bullet.kill();
-	//console.log('hit');
-	//console.log(enemy);
-
+	
 	//damage enemy
 	enemy.damage(bullet.damage);
 	if(!enemy.alive){
@@ -107,19 +125,10 @@ touched: function(player,enemy){
 		this.state.player.dead();
 	}
 
-	//console.log('touched')
-	//call removeLife if needed
+	
 
 },
 
 
 };
 
-
-// Enemy.prototype = Object.create(Phaser.Sprite.prototype);
-// Enemy.prototype.constructor = Enemy;
-
-// Enemy.prototype.setWeapon = function(weapon){
-
-//  	this.weapon=new Weapon(weapon);
-//  };

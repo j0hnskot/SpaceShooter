@@ -7,7 +7,7 @@ this.types;
 this.weapon=new Weapon();
 this.shop_objects;
 this.state;
-//this.types=weapon.getAllTypes();
+
 }
 
 
@@ -61,19 +61,7 @@ create: function(){
 	   this.shop_objects.setAll('visible',false);
 
 
-	// console.log(this.types.name);
-	// for (var key of this.types){
-	// 	console.log(key.rateOfFire);
-	// }
-	//console.log(this.types.length);
-	
-	// console.log(this.weapon.getAllTypes());
-	// console.log(this.weapon.rateOfFire);
-	// this.weapon=new Weapon('typeTwo');
-	// console.log(this.weapon.rateOfFire);
-	// //console.log(this.types.name.default.rateOfFire);
-// this.button = game.add.button(game.width/2,game.height/2, 'play_button', this.actionOnClick,this.button);
-//  this.button.anchor.setTo(0.5,0.5);
+
 },
 
 closeMenu : function(){
@@ -89,10 +77,17 @@ closeMenu : function(){
 
 },
 buy: function(){
-	console.log('cost '+this.cost);
+	console.log(this.cost);
+	var credits=parseInt(localStorage.getItem('credits'));
+	if(this.cost<=credits){
 	localStorage.setItem('got'+this.type,'true');
+	credits-=this.cost;
+	localStorage.setItem('credits',credits);
 	this.visible=false;
-	
+	}else{
+		console.log('not enought credits');
+	}
+
 
 },
 

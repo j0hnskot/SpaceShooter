@@ -23,20 +23,20 @@ this.menu;
 
 game_state.prototype={
 preload: function(){
-// game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+
 	game.scale.setShowAll();
 	game.scale.setScreenSize();
 	this.player.preload();
 	this.enemy.preload();
 	this.powerUp.preload();
-	game.load.image('player_bullet', 'assets/bullet.png');
+	game.load.image('player_bullet', 'assets/player_bullet.png');
 	game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
 	game.load.image('background', 'assets/sky.png');
 	game.load.image('explosion0', 'assets/explosion0.png');
 	game.load.image('explosion1', 'assets/explosion1.png');
 	game.load.image('explosion2', 'assets/explosion2.png');
   //   game.load.spritesheet('bird', 'assets/birdsheet.png',34,24);
- 	  game.load.image('play_button','assets/play_button.png');
+ 	  game.load.image('start_game_button','assets/start_game_button.png');
  	  game.load.image('window', 'assets/menu/window.png');
   //   game.load.image('pipe-bot','assets/pipe-bot.png');
   //    game.load.image('scoreWall','assets/scoreWall.png');
@@ -47,9 +47,10 @@ preload: function(){
 
 create: function() {
 	//start physics
-	game.world.setBounds(0, 0, 2480, 1100);
+	
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
+	game.world.setBounds(0, -100, 480, 900);
 	//create score
 	
 	
@@ -66,9 +67,7 @@ create: function() {
 		//create player bullet group
 	this.player_bullets=game.add.group();
 
-	//player_bullets.enableBody=true
-
-	//player_bullets.createMultiple(20,'player_bullet');
+	
 	
 	//create player invisible line 
 	this.invisible_line=game.add.sprite(0,0,'');
@@ -77,13 +76,15 @@ create: function() {
 	game.physics.arcade.enable(this.invisible_line);
 	//create enemy ship group
 	this.enemies=game.add.group();
+	this.enemies.createMultiple(20,'enemy_ship');
 	//create power up group
 	this.powerUps=game.add.group();
 	//call the power up's random creation timer
 	this.powerUp.create();
 	//enemy spawn timer 
-	timer=game.time.events.loop(this.spawnTime, this.addEnemy, this);
-	
+	this.type='ship';
+	timer=game.time.events.loop(4500, function(){this.addEnemy(this.type)}, this);
+	timer=game.time.events.loop(20000,this.addSpawner,this)
 	//create enemy bullet group
 	this.enemy_bullets=game.add.group();
 	// enemy_bullets.enableBody=true;
@@ -113,13 +114,7 @@ create: function() {
 	this.hud.fpsEnabled=true;
 	game.input.onDown.add(this.player.shoot,this.player);
 		game.input.onUp.add(this.player.stopShoot,this.player);	
-	// score=0;
-	// scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-	// //fps
-	//   game.time.advancedTiming = true;
- //   		this.fpsText = this.game.add.text(
- //        20, 20, '', { font: '16px Arial', fill: '#ffffff' }
- //    );
+
   
     
 },
@@ -157,28 +152,30 @@ render: function(){
 },
 
 
-addEnemy: function(){
+addEnemy: function(type){
 	
 	var enemy=new Enemy(game);
-	enemy.addEnemy(game);
-	//this.enemies.add(enemy);
-	   
-	//enemy.rateOfFire=250;
 
-	// enemy=enemies.getFirstDead();
-	//  enemy.reset(x,y);
-	//  enemy.health=3;
-	// enemy.body.velocity.y=40;
-	// enemy.checkWorldBounds=true;
- //     enemy.outOfBoundsKill= true;
+	enemy.addEnemy(type);
+
 	
 },
 
-afterBattleMenu: function(){
+addSpawner: function(){
+	var timer=game.time.events.loop(4500, function(){this.addEnemy(this.type)}, this);
+	console.log('spawner added');
+},
 
+afterBattleMenu: function(){
+	console.log('menu');
+	this.credits=Math.round(parseInt(localStorage.getItem('credits'))+(score/2));
+
+	
+	 localStorage.setItem('credits',this.credits);
+	
 	this.menu=game.add.sprite(game.width/2,game.height/2,'window');
 	this.menu.anchor.setTo(0.5,0.5);
-	this.button=game.add.sprite(game.width/2,game.height/2,'play_button');
+	this.button=game.add.sprite(game.width/2,game.height/2,'start_game_button');
 	this.button.anchor.setTo(0.5,0.5);
 	this.button.inputEnabled=true;
 	this.button.events.onInputDown.add(function(){
@@ -199,64 +196,9 @@ afterBattleMenu: function(){
 
 
 
-// playerShoot: function(){
-// 	this.player.shooting=true;
-// 	if (this.player.sprite.alive && this.player.lastTimeFired < game.time.now - this.player.weapon.rateOfFire) {
-// 			console.log('player shoot');
-
-// 		var bullet=new Bullet(game,this.player.sprite.x,this.player.sprite.y-82,'player')
-// 		bullet.damage=this.player.weapon.damage;
-// 		// bullet.checkWorldBounds=true;
-// 		// bullet.outOfBoundsKill= true;
-// 		// bullet.reset(player.x,player.y-82);
-// 		// bullet.body.velocity.y=-400;
-// 		this.player_bullets.add(bullet);
-// 		this.player.lastTimeFired=game.time.now;
-
-// 	}
-// },
-
-// playerStopShoot: function(){
-// 	this.player.shooting=false;
-// },
-
-// enemyShoot: function(x,enemy){
-// 	console.log('yy');
-	
-//  if (enemy.lastTimeFired < game.time.now - enemy.weapon.rateOfFire) {
-//  	if(this.enemy_bullets.countDead()==0){
-//  	//	console.log('new bullet');
-// 		var bullet=new Bullet(game,enemy.x+40,enemy.y+59,'enemy')
-// 		// var bullet=enemy_bullets.getFirstDead();
-// 		bullet.checkWorldBounds=true;
-// 		bullet.outOfBoundsKill= true;
-// 		bullet.damage=enemy.weapon.damage;
-// 		// bullet.reset(enemy.x+40,enemy.y+59);
-// 			// bullet.body.velocity.y=400;
-// 	//this.enemy_bullets.add(bullet)
-// 	 }else{
-// 		var bullet=this.enemy_bullets.getFirstDead();
-// 	 	bullet.reset(enemy.x+40,enemy.y+59,'enemy');
-// 	 	bullet.body.velocity.y=400;
-	 	
-// 	// 	  game.physics.arcade.enable(bullet);
-// 	// 	bullet.body.velocity=400;
-// 		bullet.checkWorldBounds=true;
-// 	    bullet.outOfBoundsKill= true;
-// 	    bullet.damage=enemy.weapon.damage;
-// 	//     console.log('old bullet');
-// 	 }
-// 	    enemy.lastTimeFired = game.time.now;
-// 	    // console.log('alive enemy bullets: '+ enemy_bullets.countLiving());
-// 	    // console.log('dead enemy bullets: '+ enemy_bullets.countDead());
-// 	  }
-
-// },
-
 removeLife: function(){
 
-//remove a life 
-//check if any life left else gameover
+
 
 },
 

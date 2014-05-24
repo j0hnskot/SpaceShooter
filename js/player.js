@@ -2,24 +2,14 @@ var Player = function (game){
 	//this.game=game;
 	this.sprite=null;
 	this.call=game.state.callbackContext;
-
-	this.x=200 ;
-	this.y=200;
-	
-// 	Phaser.Sprite.call(this, game, x, y, 'player_ship');
-// 	this.anchor.set(0.5);
-// 	this.scale.setTo(0.5,0.5);
-// 	this.alive=true;
-	//this.rateOfFire=250;
-	this.lastTimeFired=0;
-	
+	this.x=game.width/2 ;
+	this.y=game.height/2;
+	this.lastTimeFired=0;	
 	this.shooting=false;
 	this.invicibility=0;
-// 	game.physics.arcade.enable(this);
-
  	this.weapon;
  	this.state;
-// console.log(this.weapon);	
+	
 	
  }
 Player.prototype={
@@ -67,8 +57,10 @@ shoot: function(){
 	if (this.sprite.alive && this.lastTimeFired < game.time.now - this.weapon.rateOfFire) {
 			
 
-		var bullet=new Bullet(game,this.sprite.x,this.sprite.y-82,'player')
-		bullet.damage=this.weapon.damage;
+		var bullet=new Bullet(game,this.sprite.x,this.sprite.y-82,this.weapon,'player')
+		
+		
+		bullet.body.velocity.y*=-1;
 		// bullet.checkWorldBounds=true;
 		// bullet.outOfBoundsKill= true;
 		// bullet.reset(player.x,player.y-82);
@@ -90,6 +82,7 @@ stopShoot: function(){
 
 dead: function(){
 	console.log('died');
+	this.state.invisible_line.kill();
 	this.state.emitter.x = this.sprite.x;
     this.state.emitter.y = this.sprite.y;
 
@@ -102,10 +95,7 @@ dead: function(){
 	console.log(this.timer);
 	this.timer.add(2000,this.state.afterBattleMenu, this);
 	this.timer.start();
-    //game.time.events.add(2000,this.state.afterBattleMenu(),this);
-   // timer=game.time.events.loop(this.spawnTime, this.addEnemy, this);
-	
-   // this.emitter.gravity = 200;
+  
 },
 
  damaged: function(player,bullet){
@@ -113,30 +103,14 @@ dead: function(){
 	player.damage(bullet.damage); 
 	if (!player.alive){
 		this.dead();
-		//game.state.start('menu');
+	
 	}
-	//console.log(game.state.callbackContext.hud);
+	
 	game.state.callbackContext.hud.updateHealth();
-	//console.log(player.health);
-	//console.log(player);
-	//calculate how much damage the player took 
-	//call removeLife if needed
+	
 },
 
 
 
 };
 
-
-// Player.prototype = Object.create(Phaser.Sprite.prototype);
-// Player.prototype.constructor = Player;
-
-// Player.prototype.setWeapon = function(weapon){
-
-//  	this.weapon=new Weapon(weapon);
-//  };
-
-//  Player.prototype.preload=function(){
-//   game.load.image('player_ship', 'assets/spaceship.png');
-
-//  };
