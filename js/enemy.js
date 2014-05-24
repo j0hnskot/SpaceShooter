@@ -1,7 +1,6 @@
-Enemy = function (game){
+var Enemy = function (game){
 	this.sprite=null
 	
-
  }
 
 Enemy.prototype={
@@ -73,6 +72,7 @@ shoot: function(x,enemy){
 damaged: function(enemy,bullet){
 	var state=game.state.getCurrentState();
 //increase score
+
 score+=bullet.damage;
 	scoreText.text='Score: '+score;
 	bullet.kill();
@@ -97,15 +97,16 @@ score+=bullet.damage;
 },
  
 touched: function(player,enemy){
-
+	this.state=game.state.getCurrentState();
 	//damage enemy for spesific amount
 	enemy.damage(1);
 	//damage player for specific amount 
 	player.damage(1)
-
+	this.state.hud.updateHealth();
 	if (!player.alive){
-		game.state.start('menu');
+		this.state.player.dead();
 	}
+
 	//console.log('touched')
 	//call removeLife if needed
 

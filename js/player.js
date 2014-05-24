@@ -98,6 +98,12 @@ dead: function(){
     //  The third is ignored when using burst/explode mode
     //  The final parameter (10) is how many particles will be emitted in this single burst
     this.state.emitter.start(false, 1000, 50, 50);
+    this.timer = game.time.create();
+	console.log(this.timer);
+	this.timer.add(2000,this.state.afterBattleMenu, this);
+	this.timer.start();
+    //game.time.events.add(2000,this.state.afterBattleMenu(),this);
+   // timer=game.time.events.loop(this.spawnTime, this.addEnemy, this);
 	
    // this.emitter.gravity = 200;
 },

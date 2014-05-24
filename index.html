@@ -3,7 +3,7 @@
 <head> 
 	<meta charset="UTF-8" />
     <title>Space shooter with the phaser engine</title>
-	<script type="text/javascript" src="js/phaser.js"></script>
+	<script type="text/javascript" src="js/lib/phaser.js"></script>
 	<script type="text/javascript" src="js/enemy.js"></script>
 	<script type="text/javascript" src="js/powerup.js"></script>
 	<script type="text/javascript" src="js/player.js"></script>
@@ -12,7 +12,7 @@
 	<script type="text/javascript" src="js/hud.js"></script>
 	<script type="text/javascript" src="js/states/menu.js"></script>
 	<script type="text/javascript" src="js/states/game.js"></script>
-	<script type="text/javascript" src="js/states/techTree.js"></script>
+	<script type="text/javascript" src="js/states/shop.js"></script>
 	<script type="text/javascript" src="js/states/afterbattle.js"></script>
     
     <style type="text/css">
@@ -34,7 +34,7 @@ var game = new Phaser.Game(480, 800, Phaser.CANVAS, ''/*, { preload: preload, cr
 
 game.state.add('menu', menu_state); 
 game.state.add('game', game_state); 
-game.state.add('tech_tree',tech_tree_state);
+
 game.state.start('menu');
 
 

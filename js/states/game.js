@@ -15,7 +15,9 @@ this.hud=new Hud(game);
 this.powerUp=new Powerup(game);
 this.weapon=new Weapon();
 this.types;
-this.emitter
+this.emitter;
+this.menu;
+
 
 }
 
@@ -34,7 +36,8 @@ preload: function(){
 	game.load.image('explosion1', 'assets/explosion1.png');
 	game.load.image('explosion2', 'assets/explosion2.png');
   //   game.load.spritesheet('bird', 'assets/birdsheet.png',34,24);
-  //   game.load.image('pipe-top','assets/pipe-top.png');
+ 	  game.load.image('play_button','assets/play_button.png');
+ 	  game.load.image('window', 'assets/menu/window.png');
   //   game.load.image('pipe-bot','assets/pipe-bot.png');
   //    game.load.image('scoreWall','assets/scoreWall.png');
   //   game.load.audio('jump', 'assets/jump.ogg'); 
@@ -108,6 +111,8 @@ create: function() {
 	console.log(this.types);
 	this.hud.create();
 	this.hud.fpsEnabled=true;
+	game.input.onDown.add(this.player.shoot,this.player);
+		game.input.onUp.add(this.player.stopShoot,this.player);	
 	// score=0;
 	// scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 	// //fps
@@ -142,8 +147,7 @@ update: function() {
 game.physics.arcade.overlap(this.player.sprite, this.powerUps, this.powerUp.apply, null, this);
 //controls
 
-		game.input.onDown.add(this.player.shoot,this.player);
-		game.input.onUp.add(this.player.stopShoot,this.player);
+		
 
 },
 
@@ -168,6 +172,27 @@ addEnemy: function(){
 	// enemy.checkWorldBounds=true;
  //     enemy.outOfBoundsKill= true;
 	
+},
+
+afterBattleMenu: function(){
+
+	this.menu=game.add.sprite(game.width/2,game.height/2,'window');
+	this.menu.anchor.setTo(0.5,0.5);
+	this.button=game.add.sprite(game.width/2,game.height/2,'play_button');
+	this.button.anchor.setTo(0.5,0.5);
+	this.button.inputEnabled=true;
+	this.button.events.onInputDown.add(function(){
+
+	  game.add.tween(this.button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.menu).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	this.timer = game.time.create();
+	console.log(this.timer);
+	this.timer.add(2000,function(){	game.state.start('game');}, this);
+	this.timer.start();	
+	},this);
+
+
+
 },
 
 

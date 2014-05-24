@@ -1,8 +1,8 @@
 var menu_state= function(game){
 
 this.menu_button;
-this.tech_tree_button
-this.tech_tree=new tech_tree_state();
+this.shop_button
+this.shop=new Shop();
 this.menu_objects;
 }
 
@@ -13,7 +13,7 @@ menu_state.prototype={
 preload: function(){
 		game.scale.setShowAll();
     game.scale.setScreenSize();
-    this.tech_tree.preload();
+    this.shop.preload();
 	game.load.image('start_game_button','assets/start_game_button.png');
 	game.load.image('back_button','assets/bacK_button.png');
 
@@ -46,12 +46,12 @@ this.start_button = game.add.button(game.width/2,game.height/2, 'start_game_butt
 
  this.menu_objects.add(this.start_button);
 
- this.tech_tree_button = game.add.button(game.width/2,game.height/2+100, 'tech_tree_button'
- 					, this.showTechTree,this);
- this.tech_tree_button.anchor.setTo(0.5,0.5);
-  this.menu_objects.add(this.tech_tree_button);
+ this.shop_button = game.add.button(game.width/2,game.height/2+100, 'shop_button'
+ 					, this.showShop,this);
+ this.shop_button.anchor.setTo(0.5,0.5);
+  this.menu_objects.add(this.shop_button);
 
-this.tech_tree.create();
+this.shop.create();
 },
 
 startGame : function(){
@@ -62,11 +62,11 @@ startMenu: function(){
 
 },
 
-showTechTree: function(){
+showShop: function(){
 
 	this.menu_objects.setAll('visible',false);
 	console.log(this.menu_objects);
-	this.tech_tree.showTechTree();
+	this.shop.showShop();
 },
 
 };
