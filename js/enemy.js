@@ -43,6 +43,7 @@ addEnemy: function(type){
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.checkWorldBounds=true;
 	this.sprite.outOfBoundsKill=true;
+	this.sprite.body.setSize(this.sprite.width/1.3,this.sprite.height,0,-this.sprite.height/4)
 	this.sprite.body.velocity.y=(Math.random() * 200)+1;
 	this.sprite.weapon=new Weapon(this.selectedEnemy.weapon);
 	game.state.callbackContext.enemies.add(this.sprite);

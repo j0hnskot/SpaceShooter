@@ -24,10 +24,11 @@ create: function(){
 	this.weapon=new Weapon(localStorage.getItem('equippedWeapon'));
 	this.sprite=game.add.sprite(this.x,this.y,'player_ship');
 	this.sprite.anchor.set(0.5);
-	this.sprite.scale.setTo(0.5,0.5);
+	
 	this.sprite.alive=true;
 	this.sprite.health=10;
 	game.physics.arcade.enable(this.sprite);
+this.sprite.body.setSize(this.sprite.width,this.sprite.height,0,this.sprite.height/4);
 	this.shoot_sound = game.add.audio('shoot');
 
 },

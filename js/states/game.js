@@ -31,7 +31,7 @@ preload: function(){
 	this.powerUp.preload();
 	game.load.image('player_bullet', 'assets/player_bullet.png');
 	game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
-	game.load.image('background', 'assets/sky.png');
+	game.load.image('background', 'assets/background.png');
 	game.load.image('explosion0', 'assets/explosion0.png');
 	game.load.image('explosion1', 'assets/explosion1.png');
 	game.load.image('explosion2', 'assets/explosion2.png');
@@ -55,8 +55,8 @@ create: function() {
 	
 	
 	//create background
-	background=game.add.sprite(0, 0, 'background');
-	
+	background=game.add.tileSprite(0, 0,480,1280 ,'background');
+	 background.autoScroll(0,100);
 	//create player ship
 	this.player.create();
 	//game.add.existing(this.player);
@@ -147,10 +147,17 @@ game.physics.arcade.overlap(this.player.sprite, this.powerUps, this.powerUp.appl
 },
 
 render: function(){
+ 
+  
+    // pipes.forEachAlive(renderBody,this);
+     this.enemies.forEachAlive(this.renderBody,this);
+     this.game.debug.body(this.player.sprite);
 
-   
 },
+renderBody: function(obj){
 
+    this.game.debug.body(obj);
+},
 
 addEnemy: function(type){
 	
