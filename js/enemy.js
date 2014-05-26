@@ -1,6 +1,6 @@
 var Enemy = function (game){
 	this.sprite=null
-	
+	this.state;
  }
 
 Enemy.prototype={
@@ -11,25 +11,30 @@ preload: function(){
 
 },
 
+create: function(){
+	this.state=game.state.getCurrentState();
+	
+},
+
 createEnemy : function(){
 
 
 },
 addEnemy: function(type){
-	var state=game.state.callbackContext;
+	//var state=game.state.callbackContext;
 	this.x=((Math.random() * 400)+1); ;
 	this.y=-100;
-
+	console.log(this.state);
 	this.selectedEnemy=this.selectEnemy();
 	
 	
-	if(state.enemies.countDead()==0){
+	if(this.state.enemies.countDead()==0){
 		
 		this.sprite=game.add.sprite(this.x,this.y,this.selectedEnemy.key);
 		console.log('peos');
 	}else{
 		console.log('yolo');
-		this.sprite=game.state.callbackContext.enemies.getFirstDead();
+		this.sprite=this.state.enemies.getFirstDead();
 		this.sprite.loadTexture(this.selectedEnemy.key);
 		this.sprite.reset(this.x,this.y);
 	//	console.log('revived');
@@ -46,7 +51,7 @@ addEnemy: function(type){
 	this.sprite.body.setSize(this.sprite.width/1.3,this.sprite.height,0,-this.sprite.height/4)
 	this.sprite.body.velocity.y=(Math.random() * 200)+1;
 	this.sprite.weapon=new Weapon(this.selectedEnemy.weapon);
-	game.state.callbackContext.enemies.add(this.sprite);
+	this.state.enemies.add(this.sprite);
 	
 },
 
@@ -79,19 +84,28 @@ update: function(){
 },
 
 shoot: function(x,enemy){
-	
+	var bullet;
 
 	if (enemy.alive && enemy.lastTimeFired < game.time.now - enemy.weapon.rateOfFire) {
-			
+		
+			if(this.state.enemy_bullets.getFirstDead()){
+			bullet=this.state.enemy_bullets.getFirstDead();
+			bullet.resetProperties(enemy.x,enemy.y+59,enemy.weapon,'enemy');
+		}else{
+			bullet=new Bullet(game,enemy.x,enemy.y+59,enemy.weapon,'enemy')
+		}
 
-		var bullet=new Bullet(game,enemy.x,enemy.y+59,enemy.weapon,'enemy')
+		
+	
+
+	//	var bullet=new Bullet(game,enemy.x,enemy.y+59,enemy.weapon,'enemy')
 		enemy.lastTimeFired=game.time.now;
 
 	}
 },
 
 damaged: function(enemy,bullet){
-	var state=game.state.getCurrentState();
+	
 //increase score
 
 score+=bullet.damage;
@@ -101,14 +115,14 @@ score+=bullet.damage;
 	//damage enemy
 	enemy.damage(bullet.damage);
 	if(!enemy.alive){
-	state.emitter.x = enemy.x;
-    state.emitter.y = enemy.y;
+	this.state.emitter.x = enemy.x;
+    this.state.emitter.y = enemy.y;
 
     //  The first parameter sets the effect to "explode" which means all particles are emitted at once
     //  The second gives each particle a 2000ms lifespan
     //  The third is ignored when using burst/explode mode
     //  The final parameter (10) is how many particles will be emitted in this single burst
-    state.emitter.start(false, 500, 40, 10);
+    this.state.emitter.start(false, 500, 40, 10);
 	}
 	
 
@@ -116,7 +130,7 @@ score+=bullet.damage;
 },
  
 touched: function(player,enemy){
-	this.state=game.state.getCurrentState();
+	
 	//damage enemy for spesific amount
 	enemy.damage(1);
 	//damage player for specific amount 

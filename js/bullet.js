@@ -2,7 +2,7 @@ Bullet = function (game,x,y,weapon,type){
 	var velocity;
 	var key;
 	var sprite;
-	var call=game.state.callbackContext;
+	var state=game.state.callbackContext;
 		
 
 	
@@ -16,13 +16,13 @@ Bullet = function (game,x,y,weapon,type){
 	this.damage=weapon.damage;
 	this.body.velocity.y=weapon.bullet_velocity;
 	
-	
+
  
 if(type=='enemy'){	
-			call.enemy_bullets.add(this);
+			state.enemy_bullets.add(this);
 	}else{
 
-		call.player_bullets.add(this);
+		state.player_bullets.add(this);
 	}
 	
 
@@ -30,9 +30,14 @@ if(type=='enemy'){
 
 Bullet.prototype = Object.create(Phaser.Sprite.prototype);
 Bullet.prototype.constructor = Bullet;
-Bullet.prototype.destroyBullet= function(bullet){
-	console.log(bullet);
-	bullet.destroy();
-	console.log('destroyed');
+Bullet.prototype.resetProperties= function(x,y,weapon,type){
+	
+	if(this.key!=type+'_'+weapon.ammunition_type){
+		this.loadTexture(type+'_'+weapon.ammunition_type);
+	}
+	this.damage=weapon.damage;
+	this.reset(x,y);
+	this.body.velocity.y=weapon.bullet_velocity;
+	
 }
 

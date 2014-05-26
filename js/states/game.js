@@ -60,7 +60,7 @@ create: function() {
 	//create player ship
 	this.player.create();
 	//game.add.existing(this.player);
-
+	this.enemy.create();
 	
 	
 
@@ -70,8 +70,8 @@ create: function() {
 	
 	
 	//create player invisible line 
-	this.invisible_line=game.add.sprite(0,0,'');
-	this.invisible_line.scale.y=800;
+	this.invisible_line=game.add.sprite(0,-100,'enemy_bullet');
+	this.invisible_line.scale.y=850;
 	
 	game.physics.arcade.enable(this.invisible_line);
 	//create enemy ship group
@@ -112,8 +112,9 @@ create: function() {
 	console.log(this.types);
 	this.hud.create();
 	this.hud.fpsEnabled=true;
-	game.input.onDown.add(this.player.shoot,this.player);
-		game.input.onUp.add(this.player.stopShoot,this.player);	
+	
+	// game.input.onDown.add(this.player.shoot,this.player);
+	// 	game.input.onUp.add(this.player.stopShoot,this.player);	
 
   
     
@@ -133,13 +134,14 @@ update: function() {
  //check for overlap between player ship - enemy bullets  and calculate damage 
   game.physics.arcade.overlap(this.enemy_bullets, this.player.sprite, this.player.damaged, null, this.player);
  //check for overlap between player ship - enemy ship and calculate damage
- game.physics.arcade.overlap(this.player.sprite, this.enemies, this.enemy.touched, null, this)
+ game.physics.arcade.overlap(this.player.sprite, this.enemies, this.enemy.touched, null, this.enemy)
  //check for overlap between enemy ship - player bullets and calculate score and damage (call enemyDamaged)
- game.physics.arcade.overlap(this.enemies, this.player_bullets,this.enemy.damaged, null, this);
+ game.physics.arcade.overlap(this.enemies, this.player_bullets,this.enemy.damaged, null, this.enemy);
  //check for overlap between enemy ship and invisible line drawn from the player. If it overlaps, enemy shoots
- game.physics.arcade.overlap(this.enemies, this.invisible_line, this.enemy.shoot, null, this);
+ game.physics.arcade.overlap(this.enemies, this.invisible_line, this.enemy.shoot, null, this.enemy);
+  game.physics.arcade.overlap(this.enemies, this.invisible_line, this.player.shoot, null, this.player);
 //check for overlap between player ship and powerUps 
-game.physics.arcade.overlap(this.player.sprite, this.powerUps, this.powerUp.apply, null, this);
+game.physics.arcade.overlap(this.player.sprite, this.powerUps, this.powerUp.apply, null, this.powerUp);
 //controls
 
 		
@@ -150,8 +152,8 @@ render: function(){
  
   
     // pipes.forEachAlive(renderBody,this);
-     this.enemies.forEachAlive(this.renderBody,this);
-     this.game.debug.body(this.player.sprite);
+     // this.enemies.forEachAlive(this.renderBody,this);
+     // this.game.debug.body(this.player.sprite);
 
 },
 renderBody: function(obj){
@@ -161,9 +163,10 @@ renderBody: function(obj){
 
 addEnemy: function(type){
 	
-	var enemy=new Enemy(game);
+	//var enemy=new Enemy(game);
 
-	enemy.addEnemy(type);
+
+	this.enemy.addEnemy(type);
 
 	
 },

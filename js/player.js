@@ -1,7 +1,7 @@
 var Player = function (game){
 	//this.game=game;
 	this.sprite=null;
-	this.call=game.state.callbackContext;
+
 	this.x=game.width/2 ;
 	this.y=game.height/2;
 	this.lastTimeFired=0;	
@@ -28,8 +28,9 @@ create: function(){
 	this.sprite.alive=true;
 	this.sprite.health=10;
 	game.physics.arcade.enable(this.sprite);
-this.sprite.body.setSize(this.sprite.width,this.sprite.height,0,this.sprite.height/4);
+	this.sprite.body.setSize(this.sprite.width,this.sprite.height,0,this.sprite.height/4);
 	this.shoot_sound = game.add.audio('shoot');
+
 
 },
 update: function(){
@@ -42,44 +43,44 @@ update: function(){
 	    {
 	        //  Make the object seek to the active pointer (mouse or touch).
 	        game.physics.arcade.moveToPointer(this.sprite, 300);
-	      	game.state.callbackContext.invisible_line.x=this.sprite.x;
+	         this.state.invisible_line.x=this.sprite.x;
+	        
+	      	
 	    }
 	    else
 	    {
 	        //  Otherwise turn off velocity because we're close enough to the pointer
 	        this.sprite.body.velocity.set(0);
+	       	this.state.invisible_line.x=this.sprite.x;
+	      
 	    }
 	}
 },
 
 shoot: function(){
-	this.shooting=true;
-
+	//this.shooting=true;
+	var bullet;
 	if (this.sprite.alive && this.lastTimeFired < game.time.now - this.weapon.rateOfFire) {
-			
+		
+		if(this.state.player_bullets.getFirstDead()){
+			bullet=this.state.player_bullets.getFirstDead();
+			bullet.resetProperties(this.sprite.x,this.sprite.y-82,this.weapon,'player');
+		}else{
+			bullet=new Bullet(game,this.sprite.x,this.sprite.y-82,this.weapon,'player')
+		}
 
-		var bullet=new Bullet(game,this.sprite.x,this.sprite.y-82,this.weapon,'player')
 		
 		
 		bullet.body.velocity.y*=-1;
-		// bullet.checkWorldBounds=true;
-		// bullet.outOfBoundsKill= true;
-		// bullet.reset(player.x,player.y-82);
-		// bullet.body.velocity.y=-400;
-		//console.log(this);
-		//	console.log();
-		//this.game.state.states.game.player_bullets.add(bullet);
-		//game.state.callbackContext.player_bullets.add(bullet);
-		//player_bullets
 		this.lastTimeFired=game.time.now;
 //		this.shoot_sound.play();
 
 	}
 },
 
-stopShoot: function(){
-	this.shooting=false;
-},
+// stopShoot: function(){
+// 	this.shooting=false;
+// },
 
 dead: function(){
 	console.log('died');
@@ -107,7 +108,7 @@ dead: function(){
 	
 	}
 	
-	game.state.callbackContext.hud.updateHealth();
+	this.state.hud.updateHealth();
 	
 },
 
