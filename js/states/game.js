@@ -17,7 +17,9 @@ this.weapon=new Weapon();
 this.types;
 this.emitter;
 this.menu;
-
+this.numberOfSpawners=1;
+this.spawners;
+this.bossFight;
 
 }
 
@@ -47,8 +49,8 @@ preload: function(){
 
 create: function() {
 	//start physics
-	
-
+	this.spawners=[];
+	this.bossFight=false;
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.world.setBounds(0, -100, 480, 900);
 	//create score
@@ -78,13 +80,17 @@ create: function() {
 	this.enemies=game.add.group();
 	this.enemies.createMultiple(20,'enemy_ship');
 	//create power up group
+
 	this.powerUps=game.add.group();
-	//call the power up's random creation timer
+	this.powerUps.createMultiple(10,'');
 	this.powerUp.create();
+	//call the power up's random creation timer
+	
 	//enemy spawn timer 
-	this.type='ship';
-	timer=game.time.events.loop(4500, function(){this.addEnemy(this.type)}, this);
-	timer=game.time.events.loop(20000,this.addSpawner,this)
+
+	
+
+
 	//create enemy bullet group
 	this.enemy_bullets=game.add.group();
 	// enemy_bullets.enableBody=true;
@@ -112,7 +118,9 @@ create: function() {
 	console.log(this.types);
 	this.hud.create();
 	this.hud.fpsEnabled=true;
-	
+
+	this.startSpawningEnemies();
+
 	// game.input.onDown.add(this.player.shoot,this.player);
 	// 	game.input.onUp.add(this.player.stopShoot,this.player);	
 
@@ -130,6 +138,7 @@ update: function() {
       //  If the sprite is > 8px away from the pointer then let's move to it
    this.hud.update();
    this.player.update();
+   this.enemy.update();
  
  //check for overlap between player ship - enemy bullets  and calculate damage 
   game.physics.arcade.overlap(this.enemy_bullets, this.player.sprite, this.player.damaged, null, this.player);
@@ -161,19 +170,45 @@ renderBody: function(obj){
     this.game.debug.body(obj);
 },
 
+startSpawningEnemies: function(){
+	console.log('started spawning');
+	this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
+		this.spawners.push(timer=game.time.events.loop(5000,this.addSpawner,this));
+
+},
+
 addEnemy: function(type){
 	
 	//var enemy=new Enemy(game);
+	
 
-
-	this.enemy.addEnemy(type);
-
+	this.enemy.addEnemyFormation(3);
+	console.log('added enemy')
 	
 },
 
 addSpawner: function(){
-	var timer=game.time.events.loop(4500, function(){this.addEnemy(this.type)}, this);
-	console.log('spawner added');
+	var timer;
+	if(this.spawners.length>4){
+		this.addBoss();
+	}else{
+		this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
+		console.log('spawner added');
+		console.log(this.spawners.length);
+
+
+	}
+	
+},
+
+addBoss: function(){
+	console.log('adding boss');
+	this.spawners.forEach(function(timerEvent){
+		timerEvent.timer.remove(timerEvent);
+	});
+	this.spawners=[];
+	console.log(this.spawners.length);
+	this.addEnemy('boss');
 },
 
 afterBattleMenu: function(){

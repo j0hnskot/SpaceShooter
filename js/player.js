@@ -85,6 +85,13 @@ shoot: function(){
 dead: function(){
 	console.log('died');
 	this.state.invisible_line.kill();
+	this.state.spawners.forEach(function(timerEvent){
+		timerEvent.timer.remove(timerEvent);
+	//	console.log(yolo);
+	})
+
+	this.state.spawners=[];
+	console.log(this.state.spawners.length);
 	this.state.emitter.x = this.sprite.x;
     this.state.emitter.y = this.sprite.y;
 
@@ -94,7 +101,7 @@ dead: function(){
     //  The final parameter (10) is how many particles will be emitted in this single burst
     this.state.emitter.start(false, 1000, 50, 50);
     this.timer = game.time.create();
-	console.log(this.timer);
+	
 	this.timer.add(2000,this.state.afterBattleMenu, this);
 	this.timer.start();
   
