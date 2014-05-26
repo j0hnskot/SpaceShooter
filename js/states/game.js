@@ -9,6 +9,8 @@ this.timer;
 this.spawnTime=1500;
 this.playerHealth=5;
 this.fpsText;
+this.finalScore;
+this.creditsAwarded;
 this.player=new Player(game);
 this.enemy=new Enemy(game);
 this.hud=new Hud(game);
@@ -173,6 +175,7 @@ renderBody: function(obj){
 startSpawningEnemies: function(){
 	console.log('started spawning');
 	this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
+		this.spawners.push(timer=game.time.events.loop(10000, function(){this.addEnemyFormation()}, this));
 		this.spawners.push(timer=game.time.events.loop(5000,this.addSpawner,this));
 
 },
@@ -182,14 +185,18 @@ addEnemy: function(type){
 	//var enemy=new Enemy(game);
 	
 
-	this.enemy.addEnemyFormation(3);
+	this.enemy.addEnemy(type);
 	console.log('added enemy')
 	
+},
+addEnemyFormation: function(){
+this.enemy.addEnemyFormation((Math.random()*9)+1, (Math.random()*300)+10);
+
 },
 
 addSpawner: function(){
 	var timer;
-	if(this.spawners.length>4){
+	if(this.spawners.length>3){
 		this.addBoss();
 	}else{
 		this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
@@ -207,7 +214,7 @@ addBoss: function(){
 		timerEvent.timer.remove(timerEvent);
 	});
 	this.spawners=[];
-	console.log(this.spawners.length);
+	
 	this.addEnemy('boss');
 },
 
@@ -220,7 +227,10 @@ afterBattleMenu: function(){
 	
 	this.menu=game.add.sprite(game.width/2,game.height/2,'window');
 	this.menu.anchor.setTo(0.5,0.5);
-	this.button=game.add.sprite(game.width/2,game.height/2,'start_game_button');
+	this.finalScore=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y,'Score :'+ score,{fontSize:'32px',fill:'#ffffff'});
+	this.creditsAwarded=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y+30,'Credits won: '+Math.round(score/2),{fontSize:'32px',fill:'#ffffff'});
+
+	this.button=game.add.sprite(this.menu.x,this.menu.y+this.menu.width/2,'start_game_button');
 	this.button.anchor.setTo(0.5,0.5);
 	this.button.inputEnabled=true;
 	this.button.events.onInputDown.add(function(){

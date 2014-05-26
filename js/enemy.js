@@ -2,7 +2,8 @@ var Enemy = function (game){
 	this.sprite=null
 	this.state;
 	this.currentBoss;
-	this.numberOfEnemies
+	this.numberOfEnemies;
+	this.numberOfBosses;
  }
 
 Enemy.prototype={
@@ -10,12 +11,17 @@ Enemy.prototype={
 preload: function(){
     game.load.image('enemy_ship', 'assets/enemy_ship.png');
 	game.load.image('enemy_ship_2', 'assets/enemy_ship_2.png');
+	game.load.image('enemy_ship_3', 'assets/enemy_ship_3.png');
+	game.load.image('enemy_ship_4', 'assets/enemy_ship_4.png');
+	game.load.image('enemy_ship_5', 'assets/enemy_ship_5.png');
+	game.load.image('boss_1', 'assets/boss_1.png');
 
 },
 
 create: function(){
 	this.state=game.state.getCurrentState();
-	this.numberOfEnemies=3;
+	this.numberOfEnemies=5;
+	this.numberOfBosses=1;
 },
 
 createEnemy : function(){
@@ -24,13 +30,25 @@ createEnemy : function(){
 },
 addEnemyFormation: function(number,velocity){
 	randomNumber=Math.round((Math.random()*this.numberOfEnemies));
+	randomY=Math.random()*300;
+	randomX=Math.round(Math.random()*1);
+	if (randomX==0){
+		randomX=-50;
+		side=-1;
+
+	}else{
+		randomX=500;
+		side=1;
+	}
 	for(var i=1;i<=number;i++){
-		this.addEnemy(randomNumber,200,true,i);
+		game.time.events.add(1000+(i*500+velocity), 
+			function(){this.addEnemy(randomNumber,randomX,randomY,velocity,true)}, this);
+		//this.addEnemy(randomNumber,randomX+((30*i)*side),randomY,velocity,true);
 
 	}
 
 },
-addEnemy: function(type,velocity,formation,orderInFormation){
+addEnemy: function(type,x,y,velocity,formation){
 	//var state=game.state.callbackContext;
 	if(type=='boss'){
 		this.selectedEnemy=this.selectBoss();
@@ -44,8 +62,8 @@ addEnemy: function(type,velocity,formation,orderInFormation){
 
 	}else{
 		this.selectedEnemy=this.selectEnemy(type);
-		this.x=-100+(-50*orderInFormation) ;
-		this.y=400;
+		this.x=x;
+		this.y=y;
 	}
 	
 	
@@ -70,8 +88,8 @@ addEnemy: function(type,velocity,formation,orderInFormation){
 	this.sprite.health=this.selectedEnemy.health;
 	this.sprite.lastTimeFired=0;
 	game.physics.arcade.enable(this.sprite);
-	this.sprite.checkWorldBounds=true;
-	this.sprite.outOfBoundsKill=true;
+	// this.sprite.checkWorldBounds=true;
+	// this.sprite.outOfBoundsKill=true;
 	this.sprite.body.setSize(this.sprite.width/1.3,this.sprite.height,0,-this.sprite.height/4)
 	this.sprite.body.velocity.y=this.selectedEnemy.velocity;
 	this.sprite.weapon=new Weapon(this.selectedEnemy.weapon);
@@ -82,7 +100,7 @@ addEnemy: function(type,velocity,formation,orderInFormation){
 	}
 	if(formation==true){
 		this.sprite.body.velocity.y=velocity;
-		game.physics.arcade.moveToXY(this.sprite,500,200, velocity);
+		game.physics.arcade.moveToXY(this.sprite,-x,this.sprite.y+100, velocity);
 	
 	}
 	this.state.enemies.add(this.sprite);
@@ -92,13 +110,11 @@ addEnemy: function(type,velocity,formation,orderInFormation){
 selectEnemy: function(number){
 	
 	var randomNumber;
-	console.log('asdfasd');
-	console.log(this.numberOfEnemies);
 	if(typeof(number)==='undefined'){
 
 		randomNumber=Math.round((Math.random()*this.numberOfEnemies));
 	}else{
-		randomNumber=3;
+		randomNumber=number;
 	}
 	
 	var selectedEnemy;
@@ -113,6 +129,50 @@ selectEnemy: function(number){
 
 		}
 		break;
+		case 1:
+		selectedEnemy={
+			health:3,
+			weapon:'typeZero',
+			key:'enemy_ship_2',
+			velocity:randomVelocity,
+		}
+		break;
+
+		case 2:
+		selectedEnemy={
+			health:3,
+			weapon:'typeZero',
+			key:'enemy_ship_2',
+			velocity:randomVelocity,
+		}
+		break;
+
+		case 3:
+		selectedEnemy={
+			health:3,
+			weapon:'typeZero',
+			key:'enemy_ship_3',
+			velocity:randomVelocity,
+		}
+		break;
+
+		case 4:
+		selectedEnemy={
+			health:3,
+			weapon:'typeZero',
+			key:'enemy_ship_4',
+			velocity:randomVelocity,
+		}
+		break;
+
+		case 5:
+		selectedEnemy={
+			health:3,
+			weapon:'typeZero',
+			key:'enemy_ship_5',
+			velocity:randomVelocity,
+		}
+		break;
 		default:
 		selectedEnemy={
 			health:3,
@@ -123,31 +183,29 @@ selectEnemy: function(number){
 		break;
 
 	}
-	console.log(selectedEnemy);
+	
 	return selectedEnemy;
 
 },
 
 selectBoss: function(){
 
-console.log('zzasdfasd');
-	console.log(this.numberOfEnemies);
-	var randomNumber=Math.round((Math.random()*this.numberOfEnemies));
+	var randomNumber=Math.round((Math.random()*this.numberOfBosses));
 	var selectedEnemy;
 	switch (randomNumber){
 		case 1:
 		selectedEnemy={
-			health:20,
+			health:100,
 			weapon:'typeTwo',
-			key:'enemy_ship',
+			key:'boss_1',
 			velocity:10,
 		}
 		break;
 		default:
 		selectedEnemy={
-			health:20,
+			health:100,
 			weapon:'typeZero',
-			key:'enemy_ship_2',
+			key:'boss_1',
 			velocity:10,
 		}
 		break;
@@ -161,6 +219,7 @@ console.log('zzasdfasd');
 update: function(){
 	if(this.state.bossFight){
 		if(this.currentBoss.alive && this.state.player.sprite.alive){
+			console.log(	this.currentBoss.health);
 			
 		}else{
 			this.state.bossFight=false;
