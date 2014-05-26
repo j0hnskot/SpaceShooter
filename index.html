@@ -7,6 +7,33 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <script type="text/javascript" src="js/lib/phaser.js"></script>
+    <script type="text/javascript" src="js/enemy.js"></script>
+    <script type="text/javascript" src="js/powerup.js"></script>
+    <script type="text/javascript" src="js/player.js"></script>
+    <script type="text/javascript" src="js/bullet.js"></script>
+    <script type="text/javascript" src="js/weapon.js"></script>
+    <script type="text/javascript" src="js/hud.js"></script>
+    <script type="text/javascript" src="js/states/menu.js"></script>
+    <script type="text/javascript" src="js/states/game.js"></script>
+    <script type="text/javascript" src="js/states/shop.js"></script>
+    <script type="text/javascript" src="js/states/afterbattle.js"></script>
+    <script type="text/javascript">
+    var background;
+    var scoreText;
+    var score=0;
+
+    var game = new Phaser.Game(480, 800, Phaser.CANVAS, 'game'/*, { preload: preload, create: create}*/);
+
+
+    game.state.add('menu', menu_state); 
+    game.state.add('game', game_state); 
+
+    game.state.start('menu');
+
+
+
+    </script>
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -37,6 +64,8 @@
 <p>A space shooter using phaser</p>
 
 <p>Currently under construction. May or may not work.</p>
+
+<div id='game'></div>
         </section>
 
         <footer>
