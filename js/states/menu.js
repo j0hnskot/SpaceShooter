@@ -14,8 +14,11 @@ preload: function(){
 		game.scale.setShowAll();
     game.scale.setScreenSize();
     this.shop.preload();
+    game.load.image('menu_background_layer_1','assets/menu/menu_background_layer_1.png');
+    game.load.image('menu_background_layer_2','assets/menu/menu_background_layer_2.png');
 	game.load.image('start_game_button','assets/start_game_button.png');
 	game.load.image('back_button','assets/bacK_button.png');
+
 
 },
 
@@ -39,8 +42,16 @@ if(localStorage.getItem('spaceShooter.firstRun')=='true'){
 }else{
 	console.log(localStorage);	
 }
+
+	
+this.menu_background=game.add.sprite(0, 0,'menu_background_layer_1');
+this.menu_background1=game.add.tileSprite(0, 0,480,800,'menu_background_layer_2');
+ this.menu_background1.autoScroll(1,10);
+ game.add.tween(this.menu_background1).to( { alpha: 0.3 }, 5000, Phaser.Easing.Linear.None, true, 0, 1000, true);
+ game.add.tween(this.menu_background).to( { alpha: 0.9 }, 1000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 this.menu_objects=game.add.group();
 	
+
 this.start_button = game.add.button(game.width/2,game.height/2, 'start_game_button', this.startGame,this.button);
  this.start_button.anchor.setTo(0.5,0.5);
 

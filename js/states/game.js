@@ -36,6 +36,7 @@ preload: function(){
 	game.load.image('player_bullet', 'assets/player_bullet.png');
 	game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
 	game.load.image('background', 'assets/background.png');
+	game.load.image('background_layer_2', 'assets/background_layer_2.png');
 	game.load.image('explosion0', 'assets/explosion0.png');
 	game.load.image('explosion1', 'assets/explosion1.png');
 	game.load.image('explosion2', 'assets/explosion2.png');
@@ -60,7 +61,9 @@ create: function() {
 	
 	//create background
 	background=game.add.tileSprite(0, 0,480,1280 ,'background');
-	 background.autoScroll(0,100);
+	 background.autoScroll(0,20);
+	 this.background1=game.add.tileSprite(0,0,480,800,'background_layer_2');
+	 this.background1.autoScroll(0,200);
 	//create player ship
 	this.player.create();
 	//game.add.existing(this.player);
@@ -190,13 +193,13 @@ addEnemy: function(type){
 	
 },
 addEnemyFormation: function(){
-this.enemy.addEnemyFormation((Math.random()*9)+1, (Math.random()*300)+10);
+this.enemy.addEnemyFormation((Math.random()*9)+1, (Math.random()*200)+100);
 
 },
 
 addSpawner: function(){
 	var timer;
-	if(this.spawners.length>3){
+	if(this.spawners.length>15){
 		this.addBoss();
 	}else{
 		this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
