@@ -1,12 +1,13 @@
 var Shop= function(game){
 this.menu;
-this.button;
+this.buy_button;
 this.sprite;
 this.menu;
 this.types;
 this.weapon=new Weapon();
 this.shop_objects;
 this.state;
+this.equip_button;
 
 }
 
@@ -21,6 +22,8 @@ preload: function(){
   	game.load.image('close_button','assets/menu/close_button.png');
 	game.load.image('play_button','assets/play_button.png');
 	game.load.image('shop_button','assets/shop_button.png');
+	game.load.image('equip_button','assets/shop_button.png');
+
 },
 
 
@@ -53,9 +56,13 @@ create: function(){
 	 this.costText.anchor.setTo(0.5,0.5);
 	  this.shop_objects.add(this.costText);
 	
-	 this.button=game.add.sprite(150,350, 'play_button');
-	  this.button.inputEnabled=true;
-	   this.shop_objects.add(this.button);
+	 this.buy_button=game.add.sprite(150,350, 'play_button');
+	  this.buy_button.inputEnabled=true;
+	  this.shop_objects.add(this.buy_button);
+
+	   this.equip_button=game.add.sprite(150,350, 'equip_button');
+	  this.equip_button.inputEnabled=true;
+	   this.shop_objects.add(this.equip_button);
 
 
 	   this.shop_objects.setAll('visible',false);
@@ -72,7 +79,8 @@ closeMenu : function(){
 	state.shop.rateOfFireText.visible=false;
 	state.shop.damageText.visible=false;
 	state.shop.costText.visible=false;
-	state.shop.button.visible=false;
+	state.shop.buy_button.visible=false;
+	state.shop.equip_button.visible=false;
 	
 
 },
@@ -84,11 +92,17 @@ buy: function(){
 	credits-=this.cost;
 	localStorage.setItem('credits',credits);
 	this.visible=false;
+	
 	}else{
 		console.log('not enought credits');
 	}
 
 
+},
+equip: function(){
+localStorage.setItem('equippedWeapon',this.type);
+console.log('equiped');
+this.visible=false;
 },
 
 returnToMenu: function(){
@@ -137,12 +151,17 @@ description: function(item){
 	this.shop_objects.setAll('visible',true);
 	
 	if(localStorage.getItem('got'+item.type)=='false'){
-		this.button.type=item.type;
-		this.button.cost=item.cost;
-		this.button.events.onInputDown.add(this.buy, this.button);
-		this.button.visible=true;
+		this.buy_button.type=item.type;
+		this.buy_button.cost=item.cost;
+		this.buy_button.events.onInputDown.add(this.buy, this.buy_button);
+		this.buy_button.visible=true;
+		this.equip_button.visible=false;
+		console.log(localStorage.getItem('got'+item.type));
 	}else{
-		this.button.visible=false;
+		this.buy_button.visible=false;
+		this.equip_button.visible=true;
+		this.equip_button.type=item.type
+		this.equip_button.events.onInputDown.add(this.equip, this.equip_button);
 		console.log(item.type);
 		console.log(localStorage.getItem('got'+item.type));
 		console.log('owned');

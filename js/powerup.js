@@ -58,9 +58,11 @@ apply :function(player,powerUp){
 		case 3:
 		case 4:
 		case 5:
-			player.health+=10;
-			player.powerUpDuration=5000;
-			game.state.callbackContext.hud.updateHealth();
+
+			this.state.player.powerUp.shield+=10;
+			this.state.player.powerUp.duration=5000;
+			console.log('shielded');
+			this.state.hud.updateHealth();
 			break;
 		default:
 			break;
@@ -69,7 +71,10 @@ apply :function(player,powerUp){
 	
 	powerUp.kill();
 	
-}
+},
+
+remove: function(){
+},
  
 
 

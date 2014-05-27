@@ -88,8 +88,8 @@ addEnemy: function(type,x,y,velocity,formation){
 	this.sprite.health=this.selectedEnemy.health;
 	this.sprite.lastTimeFired=0;
 	game.physics.arcade.enable(this.sprite);
-	// this.sprite.checkWorldBounds=true;
-	// this.sprite.outOfBoundsKill=true;
+	this.sprite.checkWorldBounds=true;
+	this.sprite.outOfBoundsKill=true;
 	this.sprite.body.setSize(this.sprite.width/1.3,this.sprite.height,0,-this.sprite.height/4)
 	this.sprite.body.velocity.y=this.selectedEnemy.velocity;
 	this.sprite.weapon=new Weapon(this.selectedEnemy.weapon);
@@ -263,6 +263,7 @@ score+=bullet.damage;
 	//damage enemy
 	enemy.damage(bullet.damage);
 	if(!enemy.alive){
+		this.state.emitter.kill()
 	this.state.emitter.x = enemy.x;
     this.state.emitter.y = enemy.y;
 

@@ -48,9 +48,9 @@ this.ammunition_type='bullet';
 },
 
 typeOne: function(){
-	this.rateOfFire=100;
+	this.rateOfFire=300;
 	this.damage=1;
-	this.cost=150;
+	this.cost=10;
 	this.key='typeOne';
 	this.bullet_velocity=400;
 	this.ammunition_type='bullet';
@@ -59,7 +59,7 @@ typeOne: function(){
 typeTwo: function(){
 	this.rateOfFire=120;
 	this.damage=2;
-	this.cost=200;
+	this.cost=20;
 	this.key='typeTwo';
 	this.bullet_velocity=250;
 	this.ammunition_type='bullet';

@@ -55,7 +55,7 @@ create: function() {
 	this.spawners=[];
 	this.bossFight=false;
 	game.physics.startSystem(Phaser.Physics.ARCADE);
-	game.world.setBounds(0, -100, 480, 900);
+	game.world.setBounds(0, -100, 600, 900);
 	//create score
 	
 	
@@ -63,7 +63,7 @@ create: function() {
 	background=game.add.tileSprite(0, 0,480,1280 ,'background');
 	 background.autoScroll(0,20);
 	 this.background1=game.add.tileSprite(0,0,480,800,'background_layer_2');
-	 this.background1.autoScroll(0,200);
+	 this.background1.autoScroll(10,100);
 	//create player ship
 	this.player.create();
 	//game.add.existing(this.player);
@@ -77,7 +77,7 @@ create: function() {
 	
 	
 	//create player invisible line 
-	this.invisible_line=game.add.sprite(0,-100,'enemy_bullet');
+	this.invisible_line=game.add.sprite(0,-100,'');
 	this.invisible_line.scale.y=850;
 	
 	game.physics.arcade.enable(this.invisible_line);
@@ -106,7 +106,7 @@ create: function() {
     this.emitter.makeParticles(['explosion0','explosion1','explosion2']);
     this.emitter.gravity=0;
     
-    //this.emitter.lifespan=2000;
+    this.emitter.lifespan=2000;
     this.emitter.minRotation = 0;
       this.emitter.setAlpha(0.1, 0.1)
     this.emitter.maxRotation = 0;
@@ -135,10 +135,10 @@ create: function() {
 
 update: function() {
 
-	this.emitter.forEachAlive(function(particle)
-{
-    particle.alpha = game.math.clamp(particle.lifespan / 1000, 0, 1);
-}, this);
+// 	this.emitter.forEachAlive(function(particle)
+// {
+//     particle.alpha = game.math.clamp(particle.lifespan / 1000, 0, 1);
+// }, this);
 
       //  If the sprite is > 8px away from the pointer then let's move to it
    this.hud.update();
@@ -148,7 +148,7 @@ update: function() {
  //check for overlap between player ship - enemy bullets  and calculate damage 
   game.physics.arcade.overlap(this.enemy_bullets, this.player.sprite, this.player.damaged, null, this.player);
  //check for overlap between player ship - enemy ship and calculate damage
- game.physics.arcade.overlap(this.player.sprite, this.enemies, this.enemy.touched, null, this.enemy)
+ game.physics.arcade.overlap(this.player.sprite, this.enemies, this.player.touched, null, this.player)
  //check for overlap between enemy ship - player bullets and calculate score and damage (call enemyDamaged)
  game.physics.arcade.overlap(this.enemies, this.player_bullets,this.enemy.damaged, null, this.enemy);
  //check for overlap between enemy ship and invisible line drawn from the player. If it overlaps, enemy shoots
@@ -179,7 +179,7 @@ startSpawningEnemies: function(){
 	console.log('started spawning');
 	this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
 		this.spawners.push(timer=game.time.events.loop(10000, function(){this.addEnemyFormation()}, this));
-		this.spawners.push(timer=game.time.events.loop(5000,this.addSpawner,this));
+		this.spawners.push(timer=game.time.events.loop(20000,this.addSpawner,this));
 
 },
 
@@ -240,6 +240,8 @@ afterBattleMenu: function(){
 
 	  game.add.tween(this.button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.menu).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.finalScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.creditsAwarded).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	this.timer = game.time.create();
 	console.log(this.timer);
 	this.timer.add(2000,function(){	game.state.start('game');}, this);

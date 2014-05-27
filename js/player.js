@@ -8,6 +8,7 @@ var Player = function (game){
 	this.shooting=false;
 	this.invicibility=0;
  	this.weapon;
+ 	this.powerUp;
  	this.state;
 	
 	
@@ -20,6 +21,12 @@ preload: function(){
 
 },
 create: function(){
+	this.powerUp={
+		shield: 0,
+		rateOfFire:0,
+		invicibility:false,
+
+	}
 	this.state=game.state.getCurrentState();
 	this.weapon=new Weapon(localStorage.getItem('equippedWeapon'));
 	this.sprite=game.add.sprite(this.x,this.y,'player_ship');
@@ -92,6 +99,7 @@ dead: function(){
 
 	this.state.spawners=[];
 	console.log(this.state.spawners.length);
+	this.state.emitter.on=false;
 	this.state.emitter.x = this.sprite.x;
     this.state.emitter.y = this.sprite.y;
 
@@ -99,7 +107,7 @@ dead: function(){
     //  The second gives each particle a 2000ms lifespan
     //  The third is ignored when using burst/explode mode
     //  The final parameter (10) is how many particles will be emitted in this single burst
-    this.state.emitter.start(false, 1000, 50, 50);
+    this.state.emitter.start(false, 500, 40, 10);
     this.timer = game.time.create();
 	
 	this.timer.add(2000,this.state.afterBattleMenu, this);
@@ -109,7 +117,25 @@ dead: function(){
 
  damaged: function(player,bullet){
 	bullet.kill();
-	player.damage(bullet.damage); 
+	if(this.powerUp.shield>0){
+		if(this.powerUp.shield>=bullet.damage){
+			this.powerUp.shield-=bullet.damage;
+			console.log('shield');
+			console.log(this.powerUp.shield);
+		}else{
+			player.damage(bullet.damage-this.powerUp.shield);
+			console.log('shield');
+			console.log(this.powerUp.shield);
+
+			this.powerUp.shield=0;
+			console.log('shield ended');
+
+		}
+		
+	}else{
+		player.damage(bullet.damage); 
+	}
+	
 	if (!player.alive){
 		this.dead();
 	
@@ -117,6 +143,32 @@ dead: function(){
 	
 	this.state.hud.updateHealth();
 	
+},
+
+touched: function(player,enemy){
+	
+	//damage enemy for spesific amount
+	enemy.damage(1);
+	//damage player for specific amount 
+	//player.damage(1)
+	if(this.powerUp.shield>0){
+		
+			this.powerUp.shield-=1;
+			console.log('shield touched');
+			console.log(this.powerUp.shield);
+			
+		
+	}else{
+		console.log('no shield');
+		player.damage(1); 
+	}
+	this.state.hud.updateHealth();
+	if (!player.alive){
+		this.state.player.dead();
+	}
+
+	
+
 },
 
 
