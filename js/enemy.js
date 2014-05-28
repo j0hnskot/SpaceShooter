@@ -88,6 +88,10 @@ addEnemy: function(type,x,y,velocity,formation){
 	this.sprite.alive=true;
 	this.sprite.health=this.selectedEnemy.health;
 	this.sprite.lastTimeFired=0;
+	this.sprite.mountPoints=this.selectedEnemy.mountPoints;
+	console.log('mountPoints');
+
+	console.log(this.sprite.mountPoints);
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.checkWorldBounds=true;
 	this.sprite.outOfBoundsKill=true;
@@ -132,26 +136,38 @@ selectEnemy: function(number){
 			weapon:'typeTwo',
 			key:'enemy_ship',
 			velocity: randomVelocity,
+			mountPoints:{
+				ammount:1,
+				point1:{
+					x:0,
+					y:0,
+				},
+				
+			},
+
 
 		}
 		break;
-		case 1:
-		selectedEnemy={
-			health:3,
-			weapon:'typeZero',
-			key:'enemy_ship_2',
-			velocity:randomVelocity,
-		}
-		break;
-
 		case 2:
 		selectedEnemy={
 			health:3,
 			weapon:'typeZero',
 			key:'enemy_ship_2',
 			velocity:randomVelocity,
+			mountPoints:{
+				ammount:1,
+				point1:{
+					x:0,
+					y:0,
+				},
+				
+			},
+
+
 		}
 		break;
+
+		
 
 		case 3:
 		selectedEnemy={
@@ -159,6 +175,18 @@ selectEnemy: function(number){
 			weapon:'typeZero',
 			key:'enemy_ship_3',
 			velocity:randomVelocity,
+			mountPoints:{
+				ammount:2,
+				point1:{
+					x:-10,
+					y:0,
+				},
+				point2:{
+					x:10,
+					y:0,
+				},
+			},
+
 		}
 		break;
 
@@ -168,6 +196,18 @@ selectEnemy: function(number){
 			weapon:'typeZero',
 			key:'enemy_ship_4',
 			velocity:randomVelocity,
+mountPoints:{
+				ammount:2,
+				point1:{
+					x:-45,
+					y:0,
+				},
+				point2:{
+					x:40,
+					y:0,
+				},
+			},
+
 		}
 		break;
 
@@ -177,6 +217,19 @@ selectEnemy: function(number){
 			weapon:'typeZero',
 			key:'enemy_ship_5',
 			velocity:randomVelocity,
+mountPoints:{
+				ammount:2,
+				point1:{
+
+					x:-14,
+					y:-20,
+				},
+				point2:{
+					x:12,
+					y:-20,
+				},
+			},
+
 		}
 		break;
 		default:
@@ -185,6 +238,18 @@ selectEnemy: function(number){
 			weapon:'typeZero',
 			key:'enemy_ship_2',
 			velocity:randomVelocity,
+	mountPoints:{
+				ammount:2,
+				point1:{
+					x:-10,
+					y:0,
+				},
+				point2:{
+					x:10,
+					y:0,
+				},
+			},
+
 		}
 		break;
 
@@ -205,15 +270,26 @@ selectBoss: function(){
 			weapon:'typeTwo',
 			key:'boss_1',
 			velocity:0,
+			mountPoints:{
+				ammount:3,
+				point1:{
+					x:-45,
+					y:0,
+				},
+				point2:{
+					x:40,
+					y:0,
+				},
+				point3:{
+					x:0,
+					y:0,
+				},
+			},
 		}
+
 		break;
 		default:
-		selectedEnemy={
-			health:100,
-			weapon:'typeZero',
-			key:'boss_1',
-			velocity:0,
-		}
+			console.log('boss index out of range');
 		break;
 
 	}
@@ -316,14 +392,19 @@ update: function(){
 
 shoot: function(x,enemy){
 	var bullet;
+	var currentPoint;
 
 	if (enemy.alive && enemy.lastTimeFired < game.time.now - enemy.weapon.rateOfFire) {
-		
+		for(var i=1;i<=enemy.mountPoints.ammount;i++){
+			currentPoint=enemy.mountPoints['point'+i];
+			
 			if(this.state.enemy_bullets.getFirstDead()){
-			bullet=this.state.enemy_bullets.getFirstDead();
-			bullet.resetProperties(enemy.x,enemy.y+59,enemy.weapon,'enemy');
-		}else{
-			bullet=new Bullet(game,enemy.x,enemy.y+59,enemy.weapon,'enemy')
+
+				bullet=this.state.enemy_bullets.getFirstDead();
+				bullet.resetProperties(enemy.x+(currentPoint.x),enemy.y+currentPoint.y+59,enemy.weapon,'enemy');
+			}else{
+				bullet=new Bullet(game,enemy.x+currentPoint.x,enemy.y+currentPoint.y+59,enemy.weapon,'enemy')
+			}
 		}
 
 		

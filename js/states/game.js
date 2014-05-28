@@ -199,7 +199,7 @@ startSpawningEnemies: function(){
 	this.spawners=[];
 	this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
 		this.spawners.push(timer=game.time.events.loop(12000, function(){this.addEnemyFormation()}, this));
-		this.spawners.push(timer=game.time.events.loop(5000,this.addSpawner,this));
+		this.spawners.push(timer=game.time.events.loop(20000,this.addSpawner,this));
 
 },
 
@@ -219,7 +219,7 @@ this.enemy.addEnemyFormation(game.rnd.integerInRange(2, 8), game.rnd.integerInRa
 
 addSpawner: function(){
 	var timer;
-	if(this.spawners.length>2){
+	if(this.spawners.length>1){
 		this.addBoss();
 	}else{
 		this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
