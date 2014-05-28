@@ -2,7 +2,7 @@ Hud = function (game){
 	
 	this.call=game.state.callbackContext;
 	this.fpsText
-	this.enabled=true;
+	this.enabled=false;
 	this.fpsEnabled=false;
 	this.healthText;
 	this.shieldText;
@@ -20,20 +20,21 @@ preload: function(){
 
 create : function(){
 	this.state=game.state.getCurrentState();
-if(game.state.current==='game'){
+if(game.state.current==='game' && this.enabled){
 	score=0;
 	//create life bar
 	this.healthText=game.add.text(16,game.height-40,'Health: '+this.state.player.sprite.health,{fontSize:'32px',fill:'#ffffff'});
 	this.shieldText=game.add.text(216,game.height-40,'Shield: '+this.state.player.powerUp.shield,{fontSize:'32px',fill:'#ffffff'});
-
-}
-
-scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+	scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 	//fps
 	  game.time.advancedTiming = true;
    		this.fpsText = game.add.text(
         20, 20, '', { font: '16px Arial', fill: '#ffffff' }
     );
+
+}
+
+
 
 },
 
@@ -50,8 +51,10 @@ update: function(){
 },
 
 updateHealth: function(){
-	this.healthText.text='Health: '+this.state.player.sprite.health;
-	this.shieldText.text='Shield: '+this.state.player.powerUp.shield;
+	if(this.enabled){
+		this.healthText.text='Health: '+this.state.player.sprite.health;
+		this.shieldText.text='Shield: '+this.state.player.powerUp.shield;
+	}
 },
  
 

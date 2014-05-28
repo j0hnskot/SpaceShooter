@@ -33,7 +33,7 @@ create: function(){
 	this.sprite.anchor.set(0.5);
 	
 	this.sprite.alive=true;
-	this.sprite.health=10;
+	this.sprite.health=110;
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.body.setSize(this.sprite.width,this.sprite.height,0,this.sprite.height/4);
 	this.shoot_sound = game.add.audio('shoot');
@@ -49,7 +49,7 @@ update: function(){
 		if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) >10)
 	    {
 	        //  Make the object seek to the active pointer (mouse or touch).
-	        game.physics.arcade.moveToPointer(this.sprite, 300);
+	        game.physics.arcade.moveToPointer(this.sprite, 400);
 	         this.state.invisible_line.x=this.sprite.x;
 	        
 	      	
@@ -99,20 +99,32 @@ dead: function(){
 
 	this.state.spawners=[];
 	console.log(this.state.spawners.length);
-	this.state.emitter.on=false;
-	this.state.emitter.x = this.sprite.x;
-    this.state.emitter.y = this.sprite.y;
+	this.explode();
+	// this.state.emitter.on=false;
+	// this.state.emitter.x = this.sprite.x;
+ //    this.state.emitter.y = this.sprite.y;
 
-    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
-    //  The second gives each particle a 2000ms lifespan
-    //  The third is ignored when using burst/explode mode
-    //  The final parameter (10) is how many particles will be emitted in this single burst
-    this.state.emitter.start(false, 500, 40, 10);
+ //    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
+ //    //  The second gives each particle a 2000ms lifespan
+ //    //  The third is ignored when using burst/explode mode
+ //    //  The final parameter (10) is how many particles will be emitted in this single burst
+ //    this.state.emitter.start(false, 500, 40, 10);
     this.timer = game.time.create();
 	
 	this.timer.add(2000,this.state.afterBattleMenu, this);
 	this.timer.start();
   
+},
+explode: function() {
+  // first get an explosion from the pool
+  var emitter = this.state.explosionPool[this.state.currentExplosion];
+  // place the emitter position at the enemy's position via Point.copyFrom
+  emitter.position.copyFrom(this.sprite.position);
+  emitter.start(false, 500, 40, 10);
+  // increase currentExplosion by 1, ensuring it wraps around back to 0
+  // when it reaches the length of the pool array
+  this.state.currentExplosion = 
+  				Phaser.Math.wrap(this.state.currentExplosion + 1, 0, this.state.explosionPool.length);
 },
 
  damaged: function(player,bullet){

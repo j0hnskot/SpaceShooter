@@ -4,6 +4,7 @@ var Enemy = function (game){
 	this.currentBoss;
 	this.numberOfEnemies;
 	this.numberOfBosses;
+	this.tweenTimer;
  }
 
 Enemy.prototype={
@@ -29,8 +30,8 @@ createEnemy : function(){
 
 },
 addEnemyFormation: function(number,velocity){
-	randomNumber=Math.round((Math.random()*this.numberOfEnemies));
-	randomY=Math.random()*300;
+	randomNumber=game.rnd.integerInRange(1, this.numberOfEnemies);
+	randomY=game.rnd.integerInRange(100,300 );
 	randomX=Math.round(Math.random()*1);
 	if (randomX==0){
 		randomX=-50;
@@ -97,6 +98,9 @@ addEnemy: function(type,x,y,velocity,formation){
 	if(this.selectedEnemy.isBoss){
 		this.currentBoss=this.sprite;
 		this.state.bossFight=true;
+		this.addTween(this.currentBoss,true);
+		// game.add.tween(this.sprite.body).to( { y:100}, 2000, Phaser.Easing.Linear.None, true);
+		
 	}
 	if(formation==true){
 		this.sprite.body.velocity.y=velocity;
@@ -112,13 +116,15 @@ selectEnemy: function(number){
 	var randomNumber;
 	if(typeof(number)==='undefined'){
 
-		randomNumber=Math.round((Math.random()*this.numberOfEnemies));
+		randomNumber=game.rnd.integerInRange(1, this.numberOfEnemies);
+		console.log('random');
+		console.log(randomNumber);
 	}else{
 		randomNumber=number;
 	}
 	
 	var selectedEnemy;
-	var randomVelocity=(Math.random() * 200)+1;
+	var randomVelocity=game.rnd.integerInRange(100, 200);
 	switch (randomNumber){
 		case 1:
 		selectedEnemy={
@@ -190,7 +196,7 @@ selectEnemy: function(number){
 
 selectBoss: function(){
 
-	var randomNumber=Math.round((Math.random()*this.numberOfBosses));
+	var randomNumber=game.rnd.integerInRange(1, this.numberOfBosses);
 	var selectedEnemy;
 	switch (randomNumber){
 		case 1:
@@ -198,7 +204,7 @@ selectBoss: function(){
 			health:100,
 			weapon:'typeTwo',
 			key:'boss_1',
-			velocity:10,
+			velocity:0,
 		}
 		break;
 		default:
@@ -206,7 +212,7 @@ selectBoss: function(){
 			health:100,
 			weapon:'typeZero',
 			key:'boss_1',
-			velocity:10,
+			velocity:0,
 		}
 		break;
 
@@ -216,13 +222,90 @@ selectBoss: function(){
 
 
 },
+addTween: function(sprite,firstTween){
+	// var tween;
+	// var tween2;
+
+	var tween3;
+	var tween;
+	console.log('addtween sprite');
+ 	//console.log(sprite);
+	var tween1=game.add.tween(sprite.body).to( { y:200}, 2000, Phaser.Easing.Linear.None)
+	 .to({y:-50},2000,Phaser.Easing.Linear.None)
+	 
+	var tween2=game.add.tween(sprite.body).to( { x:0}, 2000, Phaser.Easing.Linear.None,false,1000)
+		.to({x:400},2000,Phaser.Easing.Linear.None,false,1000)
+		.loop()
+	
+	tween1.onComplete.add(function(){tween2.start()}, this);
+	
+	if(firstTween){
+		tween1.start()
+		this.tweenTimer = game.time.create();
+	
+		this.tweenTimer.loop(15000,function(){this.addTween(this.currentBoss)}, this);
+		this.tweenTimer.start();
+
+	}
+	else{
+		console.log('removed tween');
+		game.tweens.removeAll();
+		var randomNumber=game.rnd.integerInRange(1,10);
+		switch(randomNumber){
+			case 1:
+				 tween=game.add.tween(sprite.body).to( { x:0}, 2000, Phaser.Easing.Linear.None,false,1000)
+				.to({x:400},2000,Phaser.Easing.Linear.None,false,1000)
+				.to({x:200},2000,Phaser.Easing.Linear.None,false,1000)
+				.start();
+
+				break;
+
+			case 2:
+				 tween=game.add.tween(sprite.body).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
+				.to({y:400},2000,Phaser.Easing.Linear.None,false,1000)
+				.to({y:0},2000,Phaser.Easing.Linear.None,false,1000)
+				.start();
+
+				break;
+
+			default:
+				 tween=game.add.tween(sprite.body).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
+				.to({y:300},2000,Phaser.Easing.Linear.None,false,1000)
+				.to({y:0},2000,Phaser.Easing.Linear.None,false,1000)
+				.start();
+
+				tween=game.add.tween(sprite.body).to( {x:50}, 2000, Phaser.Easing.Linear.None,false,1000)
+				.to({x:300},2000,Phaser.Easing.Linear.None,false,1000)
+				.to({x:200},2000,Phaser.Easing.Linear.None,false,1000)
+				.start();
+				break;
+
+
+		}
+		
+	}
+
+	//tween1.onComplete(tween2.start());
+	
+
+	  // tween2=game.add.tween(sprite.body).to( { y:500}, 2000, Phaser.Easing.Linear.None)
+	  // .start();
+
+	// tween.chain(tween2=game.add.tween(sprite.body).to( { x:0}, 2000, Phaser.Easing.Linear.None, true));
+	 //tween.chain(tween3=game.add.tween(sprite.body).to( { x:480}, 2000, Phaser.Easing.Linear.None, true,0,0,true));
+	
+},
+
 update: function(){
 	if(this.state.bossFight){
 		if(this.currentBoss.alive && this.state.player.sprite.alive){
-			console.log(	this.currentBoss.health);
+		//	console.log(	this.currentBoss.health);
 			
 		}else{
 			this.state.bossFight=false;
+			this.tweenTimer.destroy;
+			game.tweens.removeAll();
+
 			if(this.state.player.sprite.alive){
 				this.state.startSpawningEnemies();
 			}
@@ -263,19 +346,33 @@ score+=bullet.damage;
 	//damage enemy
 	enemy.damage(bullet.damage);
 	if(!enemy.alive){
-		this.state.emitter.kill()
-	this.state.emitter.x = enemy.x;
-    this.state.emitter.y = enemy.y;
+		this.explode(enemy);
+	// 	this.state.emitter.kill()
+	// this.state.emitter.x = enemy.x;
+ //    this.state.emitter.y = enemy.y;
 
-    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
-    //  The second gives each particle a 2000ms lifespan
-    //  The third is ignored when using burst/explode mode
-    //  The final parameter (10) is how many particles will be emitted in this single burst
-    this.state.emitter.start(false, 500, 40, 10);
+ //    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
+ //    //  The second gives each particle a 2000ms lifespan
+ //    //  The third is ignored when using burst/explode mode
+ //    //  The final parameter (10) is how many particles will be emitted in this single burst
+ //    this.state.emitter.start(false, 500, 40, 10);
 	}
 	
 
 
+},
+
+explode: function(enemy) {
+  // first get an explosion from the pool
+  var emitter = this.state.explosionPool[this.state.currentExplosion];
+  //console.log(this.state.currentExplosion);
+  // place the emitter position at the enemy's position via Point.copyFrom
+  emitter.position.copyFrom(enemy.position);
+  emitter.start(false, 500, 40, 10);
+  // increase currentExplosion by 1, ensuring it wraps around back to 0
+  // when it reaches the length of the pool array
+  this.state.currentExplosion = 
+  				Phaser.Math.wrap(this.state.currentExplosion + 1, 0, this.state.explosionPool.length);
 },
  
 touched: function(player,enemy){
@@ -291,6 +388,16 @@ touched: function(player,enemy){
 
 	
 
+},
+
+killAll:function(){
+	while(this.state.enemies.getFirstAlive()){
+		var enemy=this.state.enemies.getFirstAlive();
+		enemy.kill();
+		
+		this.explode(enemy);
+
+	}
 },
 
 

@@ -22,6 +22,8 @@ this.menu;
 this.numberOfSpawners=1;
 this.spawners;
 this.bossFight;
+this.currentExplosion;
+this.explosionPool=[];
 
 }
 
@@ -52,6 +54,7 @@ preload: function(){
 
 create: function() {
 	//start physics
+	this.currentExplosion=0;
 	this.spawners=[];
 	this.bossFight=false;
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -102,15 +105,29 @@ create: function() {
 	// enemy_bullets.createMultiple(200,'');
 	
 	//create effects for firing ,damage and death
-	this.emitter = game.add.emitter(300,200, 100);
-    this.emitter.makeParticles(['explosion0','explosion1','explosion2']);
-    this.emitter.gravity=0;
+
+	for (var e = 0; e < 10; e++) {
+		var emitter = game.add.emitter(0, 0, 10);
+		/* ... your emitter setup here ... */
+		emitter.makeParticles(['explosion0','explosion1','explosion2'],0,10);
+		emitter.gravity=0;
+
+		//emitter.lifespan=2000;
+		emitter.minRotation = 0;
+		emitter.setAlpha(0.1, 0.1)
+		emitter.maxRotation = 0;
+		emitter.maxParticleSpeed=1;
+		this.explosionPool.push(emitter);
+	}
+	// this.emitter = game.add.emitter(300,200, 100);
+ //    this.emitter.makeParticles(['explosion0','explosion1','explosion2']);
+ //    this.emitter.gravity=0;
     
-    this.emitter.lifespan=2000;
-    this.emitter.minRotation = 0;
-      this.emitter.setAlpha(0.1, 0.1)
-    this.emitter.maxRotation = 0;
- 	this.emitter.maxParticleSpeed=1;
+ //    this.emitter.lifespan=2000;
+ //    this.emitter.minRotation = 0;
+ //      this.emitter.setAlpha(0.1, 0.1)
+ //    this.emitter.maxRotation = 0;
+ // 	this.emitter.maxParticleSpeed=1;
    
        // this.emitter.start(false, 1000, 50, 30);
 
@@ -121,7 +138,9 @@ create: function() {
 	//score 
 	this.types=this.weapon.getAllTypes();
 	console.log(this.types);
+	this.hud.enabled=true;
 	this.hud.create();
+
 	this.hud.fpsEnabled=true;
 
 	this.startSpawningEnemies();
@@ -177,9 +196,10 @@ renderBody: function(obj){
 
 startSpawningEnemies: function(){
 	console.log('started spawning');
+	this.spawners=[];
 	this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
-		this.spawners.push(timer=game.time.events.loop(10000, function(){this.addEnemyFormation()}, this));
-		this.spawners.push(timer=game.time.events.loop(20000,this.addSpawner,this));
+		this.spawners.push(timer=game.time.events.loop(12000, function(){this.addEnemyFormation()}, this));
+		this.spawners.push(timer=game.time.events.loop(5000,this.addSpawner,this));
 
 },
 
@@ -193,13 +213,13 @@ addEnemy: function(type){
 	
 },
 addEnemyFormation: function(){
-this.enemy.addEnemyFormation((Math.random()*9)+1, (Math.random()*200)+100);
+this.enemy.addEnemyFormation(game.rnd.integerInRange(2, 8), game.rnd.integerInRange(100, 200));
 
 },
 
 addSpawner: function(){
 	var timer;
-	if(this.spawners.length>15){
+	if(this.spawners.length>2){
 		this.addBoss();
 	}else{
 		this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
@@ -217,8 +237,9 @@ addBoss: function(){
 		timerEvent.timer.remove(timerEvent);
 	});
 	this.spawners=[];
-	
-	this.addEnemy('boss');
+	this.enemy.killAll();
+	this.timer=game.time.events.add(4000,function(){this.addEnemy('boss')},this);
+	//this.timer.start();
 },
 
 afterBattleMenu: function(){

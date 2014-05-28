@@ -4,6 +4,7 @@ Weapon = function (type){
 	this.damage;
 	this.cost;
 	this.bullet_velocity;
+	this.ammunition_type;
 	if(typeof(type)==='undefined'){
 		this.type='typeZero';
 	}else{
