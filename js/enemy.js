@@ -9,15 +9,10 @@ var Enemy = function (game){
 
 Enemy.prototype={
 
-preload: function(){
-    game.load.image('enemy_ship', 'assets/enemy_ship.png');
-	game.load.image('enemy_ship_2', 'assets/enemy_ship_2.png');
-	game.load.image('enemy_ship_3', 'assets/enemy_ship_3.png');
-	game.load.image('enemy_ship_4', 'assets/enemy_ship_4.png');
-	game.load.image('enemy_ship_5', 'assets/enemy_ship_5.png');
-	game.load.image('boss_1', 'assets/boss_1.png');
+// preload: function(){
+   
 
-},
+// },
 
 create: function(){
 	this.state=game.state.getCurrentState();
@@ -102,7 +97,7 @@ addEnemy: function(type,x,y,velocity,formation){
 		this.currentBoss=this.sprite;
 		this.state.bossFight=true;
 		this.addTween(this.currentBoss,true);
-		
+		 
 		
 	}
 	if(formation==true){

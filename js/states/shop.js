@@ -17,20 +17,11 @@ this.credits
 
 Shop.prototype={
 
-preload: function(){
-		game.scale.setShowAll();
-    game.scale.setScreenSize();
-  	game.load.image('window','assets/menu/window.png');
-  	game.load.image('close_button','assets/menu/close_button.png');
-	game.load.image('play_button','assets/play_button.png');
-	game.load.image('shop_button','assets/shop_button.png');
-	game.load.image('buy_button','assets/buy_button.png');
-	game.load.image('equip_button','assets/equip_button.png');
-	game.load.image('equipped_button','assets/equipped_button.png');
-	game.load.image('typeZero','assets/typeZero.png');
-	game.load.image('typeOne','assets/typeOne.png');
-	game.load.image('typeTwo','assets/typeTwo.png');
-},
+// preload: function(){
+// 		game.scale.setShowAll();
+//     game.scale.setScreenSize();
+  	
+// },
 
 
 

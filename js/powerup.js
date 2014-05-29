@@ -11,10 +11,10 @@ Powerup = function (game){
 
 Powerup.prototype={
 
-preload: function(){
-   game.load.image('powerup', 'assets/powerup.png');
+// preload: function(){
+   
 
-},
+// },
 
 create : function(){
 	this.state=game.state.getCurrentState();

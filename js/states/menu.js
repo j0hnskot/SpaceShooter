@@ -4,6 +4,7 @@ this.menu_button;
 this.shop_button
 this.shop=new Shop();
 this.menu_objects;
+this.titleImage;
 }
 
 
@@ -11,14 +12,7 @@ this.menu_objects;
 menu_state.prototype={
 
 preload: function(){
-		game.scale.setShowAll();
-    game.scale.setScreenSize();
-    this.shop.preload();
-    game.load.image('menu_background_layer_1','assets/menu/menu_background_layer_1.png');
-    game.load.image('menu_background_layer_2','assets/menu/menu_background_layer_2.png');
-	game.load.image('start_game_button','assets/start_game_button.png');
-	game.load.image('back_button','assets/bacK_button.png');
-
+	
 
 },
 
@@ -34,7 +28,7 @@ if(localStorage.getItem('spaceShooter.firstRun')=='true'){
 	localStorage.setItem('gottypeZero','true');
 	localStorage.setItem('gottypeOne','false');
 	localStorage.setItem('gottypeTwo','false');
-	localStorage.setItem('score','0');
+	localStorage.setItem('highscore','0');
 	localStorage.setItem('equippedWeapon','typeZero');
 	localStorage.setItem('credits','0')
 	localStorage.setItem('dateCreated',new Date())
@@ -43,7 +37,7 @@ if(localStorage.getItem('spaceShooter.firstRun')=='true'){
 	console.log(localStorage);	
 }
 
-	
+
 this.menu_background=game.add.sprite(0, 0,'menu_background_layer_1');
 this.menu_background1=game.add.tileSprite(0, 0,480,800,'menu_background_layer_2');
  this.menu_background1.autoScroll(1,10);
@@ -52,6 +46,9 @@ this.menu_background1=game.add.tileSprite(0, 0,480,800,'menu_background_layer_2'
 this.menu_objects=game.add.group();
 	
 
+this.titleImage=game.add.sprite(game.width/2,game.height/2-300,'title');
+this.titleImage.anchor.set(0.5);
+this.menu_objects.add(this.titleImage);
 this.start_button = game.add.button(game.width/2,game.height/2, 'start_game_button', this.startGame,this.button);
  this.start_button.anchor.setTo(0.5,0.5);
 

@@ -18,14 +18,10 @@ var Player = function (game){
  }
 Player.prototype={
 
-preload: function(){
- game.load.image('player_ship', 'assets/spaceship.png');
- game.load.image('shield', 'assets/shield.png');
-  game.load.image('invicibility', 'assets/invicibility.png');
- game.load.audio('shoot', 'assets/sound/Laser1.wav');
- game.load.image('lowHealth', 'assets/lowHealth.png');
+// preload: function(){
 
-},
+
+// },
 create: function(){
 	this.powerUp={
 		shield: 0,
@@ -49,7 +45,7 @@ create: function(){
 	this.sprite.health=10;
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.body.setSize(this.sprite.width,this.sprite.height,0,this.sprite.height/4);
-	this.shoot_sound = game.add.audio('shoot');
+	this.shoot_sound = game.add.audio('shoot',0.1);
 
 	this.shield=game.add.sprite(0,-25,'shield');
 	this.shield.anchor.set(0.5);
@@ -69,11 +65,11 @@ update: function(){
 				this.shoot();
 			}
 	 
-		if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) >10)
+		if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) >20)
 	    {
 	        //  Make the object seek to the active pointer (mouse or touch).
-	        game.physics.arcade.moveToPointer(this.sprite, 400);
-	         this.state.invisible_line.x=this.sprite.x;
+	        game.physics.arcade.moveToPointer(this.sprite, 300);
+	        // this.state.invisible_line.x=this.sprite.x;
 	        
 	      	
 	    }
@@ -81,7 +77,7 @@ update: function(){
 	    {
 	        //  Otherwise turn off velocity because we're close enough to the pointer
 	        this.sprite.body.velocity.set(0);
-	       	this.state.invisible_line.x=this.sprite.x;
+	       	//this.state.invisible_line.x=this.sprite.x;
 	      
 	    }
 	}
@@ -104,7 +100,7 @@ shoot: function(){
 		
 		bullet.body.velocity.y*=-1;
 		this.lastTimeFired=game.time.now;
-//		this.shoot_sound.play();
+	this.shoot_sound.play();
 
 	}
 },
@@ -197,6 +193,9 @@ touched: function(player,enemy){
 	
 	//damage enemy for spesific amount
 	enemy.damage(1);
+	if(enemy.alive==false){
+		this.state.enemy.explode(enemy);
+	}
 	//damage player for specific amount 
 	//player.damage(1)
 	if(!this.powerUp.invicibility){

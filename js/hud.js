@@ -12,11 +12,11 @@ Hud = function (game){
 
 Hud.prototype={
 
-preload: function(){
-    game.load.image('enemy_ship', 'assets/enemy_ship.png');
+// preload: function(){
+    
 
 
-},
+// },
 
 create : function(){
 	this.state=game.state.getCurrentState();

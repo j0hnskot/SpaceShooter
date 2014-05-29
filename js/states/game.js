@@ -24,30 +24,21 @@ this.spawners;
 this.bossFight;
 this.currentExplosion;
 this.explosionPool=[];
+this.newHighScore;
+this.previousHighScore;
+this.bossWarning;
 
 }
 
 game_state.prototype={
 preload: function(){
 
-	game.scale.setShowAll();
-	game.scale.setScreenSize();
-	this.player.preload();
-	this.enemy.preload();
-	this.powerUp.preload();
-	game.load.image('player_bullet', 'assets/player_bullet.png');
-	game.load.image('player_bullet_fast', 'assets/player_bullet_fast.png');
-	game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
-	game.load.image('background', 'assets/background.png');
-	game.load.image('background_layer_2', 'assets/background_layer_2.png');
-	game.load.image('explosion0', 'assets/explosion0.png');
-	game.load.image('explosion1', 'assets/explosion1.png');
-	game.load.image('explosion2', 'assets/explosion2.png');
-  //   game.load.spritesheet('bird', 'assets/birdsheet.png',34,24);
- 	  game.load.image('start_game_button','assets/start_game_button.png');
- 	  game.load.image('restart_game_button','assets/restart_game_button.png');
- 	  game.load.image('window', 'assets/menu/window.png');
- 	    game.load.image('menu_button', 'assets/menu_button.png');
+	// game.scale.setShowAll();
+	// game.scale.setScreenSize();
+	// this.player.preload();
+	// this.enemy.preload();
+	// this.powerUp.preload();
+	
   //   game.load.image('pipe-bot','assets/pipe-bot.png');
   //    game.load.image('scoreWall','assets/scoreWall.png');
   //   game.load.audio('jump', 'assets/jump.ogg'); 
@@ -84,8 +75,10 @@ create: function() {
 	
 	
 	//create player invisible line 
-	this.invisible_line=game.add.sprite(0,-100,'');
+	this.invisible_line=game.add.sprite(0,0,'');
+	this.invisible_line.anchor.set(0.5,1);
 	this.invisible_line.scale.y=850;
+	this.player.sprite.addChild(this.invisible_line);
 	
 	game.physics.arcade.enable(this.invisible_line);
 	//create enemy ship group
@@ -146,14 +139,32 @@ create: function() {
 	this.hud.create();
 
 	this.hud.fpsEnabled=true;
-
+	//score=1000;
 	this.startSpawningEnemies();
 
 	// game.input.onDown.add(this.player.shoot,this.player);
 	// 	game.input.onUp.add(this.player.stopShoot,this.player);	
-
-  
+	this.bossWarning=game.add.text(game.width/2, game.width/2+100, '       --WARNING-- \n -INCOMMING BOSS-', { font: '32px Arial', fill: '#fff' });
+	this.bossWarning.alpha=0;
+	this.bossWarning.anchor.set(0.5);
+	 this.pause_label = game.add.text(game.width - 100, game.height-40, 'Pause', { font: '24px Arial', fill: '#fff' });
+    this.pause_label.inputEnabled = true;
+    this.pause_label.events.onInputUp.add(function () {
+        // When the paus button is pressed, we pause the game
+        game.paused = true;        
+        // And a label to illustrate which menu item was chosen. (This is not necessary)
+        this.choiseLabel = game.add.text(game.width/2, game.height/2, '--PAUSED--', { font: '40px Arial', fill: '#fff' });
+        this.choiseLabel.anchor.setTo(0.5, 0.5);
+    });
+   game.input.onDown.add(this.unpause, self);
     
+},
+unpause: function(event){
+	if(game.paused){
+		  this.choiseLabel.destroy();
+		  game.paused=false;
+	}
+
 },
 
 update: function() {
@@ -189,7 +200,7 @@ render: function(){
  
   
     // pipes.forEachAlive(renderBody,this);
-      this.enemies.forEachAlive(this.renderBody,this);
+    //  this.enemies.forEachAlive(this.renderBody,this);
      // this.game.debug.body(this.player.sprite);
 
 },
@@ -241,21 +252,39 @@ addBoss: function(){
 	});
 	this.spawners=[];
 	this.enemy.killAll();
+	var tween=game.add.tween(this.bossWarning).to( {alpha:1}, 1000, Phaser.Easing.Linear.None)
+				 .to({alpha:0.5},500,Phaser.Easing.Linear.None,false,500)
+				.to({alpha:1},500,Phaser.Easing.Linear.None,false,500)
+				.to({alpha:0},500,Phaser.Easing.Linear.None,false,500)
+				.start();
 	this.timer=game.time.events.add(4000,function(){this.addEnemy('boss')},this);
 	//this.timer.start();
 },
 
 afterBattleMenu: function(){
+	var oldScore=parseInt(localStorage.getItem('highscore'));
+	var newRecord=false;
+	if(oldScore<score){
+		localStorage.setItem('highscore',score);
+		newRecord=true;
+	}
 	
+
 	this.credits=Math.round(parseInt(localStorage.getItem('credits'))+(score/2));
 
 	
 	 localStorage.setItem('credits',this.credits);
-	
 	this.menu=game.add.sprite(game.width/2,game.height/2,'window');
 	this.menu.anchor.setTo(0.5,0.5);
-	this.finalScore=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y,'Score :'+ score,{fontSize:'32px',fill:'#c1bcbc'});
-	this.creditsAwarded=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y+30,'Credits won: '+Math.round(score/2),{fontSize:'32px',fill:'#c1bcbc'});
+	
+	this.previousHighScore=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y-200,'HighScore :'+ oldScore,{fontSize:'32px',fill:'#c1bcbc'});
+	this.finalScore=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y-100,'Score :'+ score,{fontSize:'32px',fill:'#c1bcbc'});
+	if(newRecord){
+		this.newHighScore=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y-50,'New record!',{fontSize:'20px',fill:'#c1bcbc'});
+	
+	}
+
+	this.creditsAwarded=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y,'Credits won: '+Math.round(score/2),{fontSize:'32px',fill:'#c1bcbc'});
 
 	this.menu_button=game.add.sprite(this.menu.x,this.menu.y+this.menu.width/2+50,'menu_button');
 	this.menu_button.anchor.setTo(0.5,0.5);
@@ -265,8 +294,10 @@ afterBattleMenu: function(){
 	  game.add.tween(this.restart_game_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	   game.add.tween(this.menu_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.menu).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.previousHighScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.finalScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.creditsAwarded).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	 if(newRecord){game.add.tween(this.newHighScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true)};
 	this.timer = game.time.create();
 	
 	this.timer.add(2000,function(){	game.state.start('menu');}, this);
@@ -281,8 +312,10 @@ afterBattleMenu: function(){
 	  game.add.tween(this.restart_game_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	   game.add.tween(this.menu_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.menu).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.previousHighScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.finalScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.creditsAwarded).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	 if(newRecord){game.add.tween(this.newHighScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true)};
 	this.timer = game.time.create();
 	
 	this.timer.add(2000,function(){	game.state.start('game');}, this);

@@ -29,13 +29,82 @@ var background;
 var scoreText;
 var score=0;
 
-var game = new Phaser.Game(480, 800, Phaser.CANVAS, ''/*, { preload: preload, create: create}*/);
+var game = new Phaser.Game(480, 800, Phaser.CANVAS, '',  {preload: preload, create: create});
 
+function preload(){
+var preloadSprite=null;
+var text;	
+		game.scale.setShowAll();
+    game.scale.setScreenSize();
+   // var loadSprite=game.add.sprite(0,0,'load');
+   game.load.image('load','assets/load.png');
+   game.load.onFileComplete.add(function(q){
+   	if(preloadSprite==null){
+   	preloadSprite=game.add.image(game.width/2,game.height/2,'load');
+   	preloadSprite.anchor.set(0.5);
+   	text=game.add.text(game.width/2,game.height/2+100,'Loading..',{fontSize:'32px',fill:'#ffffff'});
+   	text.anchor.set(0.5);
+   }
+  	console.log(preloadSprite);
+  	//preloadSprite=game.add.image(0,0,'load')
+   	preloadSprite.width=q*4;
+   	});
+  	game.load.onLoadComplete.add(function(){
+  		preloadSprite.kill()
+  		text.kill();
+  	})
+    
+ 
+ //   this.shop.preload();
+    game.load.image('powerup', 'assets/powerup.png');
+    game.load.image('window','assets/menu/window.png');
+  	game.load.image('close_button','assets/menu/close_button.png');
+	game.load.image('play_button','assets/play_button.png');
+	game.load.image('shop_button','assets/shop_button.png');
+	game.load.image('buy_button','assets/buy_button.png');
+	game.load.image('equip_button','assets/equip_button.png');
+	game.load.image('equipped_button','assets/equipped_button.png');
+	game.load.image('typeZero','assets/typeZero.png');
+	game.load.image('typeOne','assets/typeOne.png');
+	game.load.image('typeTwo','assets/typeTwo.png');
+    game.load.image('player_bullet', 'assets/player_bullet.png');
+	game.load.image('player_bullet_fast', 'assets/player_bullet_fast.png');
+	game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
+	game.load.image('background', 'assets/background.png');
+	game.load.image('background_layer_2', 'assets/background_layer_2.png');
+	game.load.image('explosion0', 'assets/explosion0.png');
+	game.load.image('explosion1', 'assets/explosion1.png');
+	game.load.image('explosion2', 'assets/explosion2.png');
+	game.load.image('start_game_button','assets/start_game_button.png');
+	game.load.image('restart_game_button','assets/restart_game_button.png');
+	game.load.image('window', 'assets/menu/window.png');
+	game.load.image('menu_button', 'assets/menu_button.png');
+	game.load.image('player_ship', 'assets/spaceship.png');
+	game.load.image('shield', 'assets/shield.png');
+	game.load.image('invicibility', 'assets/invicibility.png');
+	game.load.audio('shoot', 'assets/sound/Laser1.wav');
+	game.load.image('lowHealth', 'assets/lowHealth.png');
+   	game.load.image('enemy_ship', 'assets/enemy_ship.png');
+	game.load.image('enemy_ship_2', 'assets/enemy_ship_2.png');
+	game.load.image('enemy_ship_3', 'assets/enemy_ship_3.png');
+	game.load.image('enemy_ship_4', 'assets/enemy_ship_4.png');
+	game.load.image('enemy_ship_5', 'assets/enemy_ship_5.png');
+	game.load.image('boss_1', 'assets/boss_1.png');
+    game.load.image('menu_background_layer_1','assets/menu/menu_background_layer_1.png');
+    game.load.image('menu_background_layer_2','assets/menu/menu_background_layer_2.png');
+	game.load.image('start_game_button','assets/start_game_button.png');
+	game.load.image('back_button','assets/back_button.png');
+	game.load.image('title','assets/title.png')
 
+	
+}
+function create(){
 game.state.add('menu', menu_state); 
 game.state.add('game', game_state); 
 
-game.state.start('menu');
+game.state.start('menu');	
+}
+
 
 
 
