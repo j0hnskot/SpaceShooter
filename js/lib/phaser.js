@@ -51808,7 +51808,7 @@ Phaser.Particles.Arcade.Emitter.prototype.start = function (explode, lifespan, f
     }
     else
     {
-        this._quantity += quantity;
+        this._quantity = quantity;
     }
 
     this._counter = 0;
