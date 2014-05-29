@@ -35,7 +35,7 @@ if(localStorage.getItem('spaceShooter.firstRun')=='true'){
 	localStorage.setItem('gottypeOne','false');
 	localStorage.setItem('gottypeTwo','false');
 	localStorage.setItem('score','0');
-	localStorage.setItem('equippedWeapon','typeOne');
+	localStorage.setItem('equippedWeapon','typeZero');
 	localStorage.setItem('credits','0')
 	localStorage.setItem('dateCreated',new Date())
 	console.log('first run');

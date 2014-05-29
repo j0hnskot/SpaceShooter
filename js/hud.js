@@ -24,8 +24,13 @@ if(game.state.current==='game' && this.enabled){
 	score=0;
 	//create life bar
 	this.healthText=game.add.text(16,game.height-40,'Health: '+this.state.player.sprite.health,{fontSize:'32px',fill:'#ffffff'});
+	this.healthText.alpha=0.5;
+
 	this.shieldText=game.add.text(216,game.height-40,'Shield: '+this.state.player.powerUp.shield,{fontSize:'32px',fill:'#ffffff'});
-	scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+	this.shieldText.alpha=0.5;
+
+	scoreText = game.add.text(200, 16, 'Score: 0', { fontSize: '32px', fill: '#ffffff' });
+	scoreText.alpha=0.5;
 	//fps
 	  game.time.advancedTiming = true;
    		this.fpsText = game.add.text(

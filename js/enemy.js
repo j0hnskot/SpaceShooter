@@ -53,7 +53,7 @@ addEnemy: function(type,x,y,velocity,formation){
 	//var state=game.state.callbackContext;
 	if(type=='boss'){
 		this.selectedEnemy=this.selectBoss();
-		this.x=game.world.width/2;
+		this.x=game.width/2;
 		this.y=-100;
 
 	}else if(typeof(type)==='undefined'){
@@ -74,13 +74,13 @@ addEnemy: function(type,x,y,velocity,formation){
 	if(this.state.enemies.countDead()==0){
 		
 		this.sprite=game.add.sprite(this.x,this.y,this.selectedEnemy.key);
-		console.log('peos');
+		
 	}else{
-		console.log('yolo');
+		
 		this.sprite=this.state.enemies.getFirstDead();
 		this.sprite.loadTexture(this.selectedEnemy.key);
 		this.sprite.reset(this.x,this.y);
-	//	console.log('revived');
+	
 	}
 	
 	this.sprite.anchor.set(0.5);
@@ -89,13 +89,12 @@ addEnemy: function(type,x,y,velocity,formation){
 	this.sprite.health=this.selectedEnemy.health;
 	this.sprite.lastTimeFired=0;
 	this.sprite.mountPoints=this.selectedEnemy.mountPoints;
-	console.log('mountPoints');
+	
 
-	console.log(this.sprite.mountPoints);
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.checkWorldBounds=true;
 	this.sprite.outOfBoundsKill=true;
-	this.sprite.body.setSize(this.sprite.width/1.3,this.sprite.height,0,-this.sprite.height/4)
+	this.sprite.body.setSize(this.sprite.width/1.3,this.sprite.height/1.5,0,-this.sprite.height/6.5)
 	this.sprite.body.velocity.y=this.selectedEnemy.velocity;
 	this.sprite.weapon=new Weapon(this.selectedEnemy.weapon);
 	
@@ -103,7 +102,7 @@ addEnemy: function(type,x,y,velocity,formation){
 		this.currentBoss=this.sprite;
 		this.state.bossFight=true;
 		this.addTween(this.currentBoss,true);
-		// game.add.tween(this.sprite.body).to( { y:100}, 2000, Phaser.Easing.Linear.None, true);
+		
 		
 	}
 	if(formation==true){
@@ -121,8 +120,7 @@ selectEnemy: function(number){
 	if(typeof(number)==='undefined'){
 
 		randomNumber=game.rnd.integerInRange(1, this.numberOfEnemies);
-		console.log('random');
-		console.log(randomNumber);
+		
 	}else{
 		randomNumber=number;
 	}
@@ -304,56 +302,90 @@ addTween: function(sprite,firstTween){
 
 	var tween3;
 	var tween;
-	console.log('addtween sprite');
- 	//console.log(sprite);
-	var tween1=game.add.tween(sprite.body).to( { y:200}, 2000, Phaser.Easing.Linear.None)
-	 .to({y:-50},2000,Phaser.Easing.Linear.None)
+
+	// var tween1=game.add.tween(sprite).to( { y:300}, 2000, Phaser.Easing.Linear.None)
+	//  .to({y:100},2000,Phaser.Easing.Linear.None);
+
 	 
-	var tween2=game.add.tween(sprite.body).to( { x:0}, 2000, Phaser.Easing.Linear.None,false,1000)
-		.to({x:400},2000,Phaser.Easing.Linear.None,false,1000)
-		.loop()
+	// var tween2=game.add.tween(sprite.body).to( { x:100}, 2000, Phaser.Easing.Linear.None,false,1000)
+	// 	.to({x:300},2000,Phaser.Easing.Linear.None,false,1000)
+	// 	.to({x:200},2000,Phaser.Easing.Linear.None,false,1000);
 	
-	tween1.onComplete.add(function(){tween2.start()}, this);
+	//tween1.onComplete.add(function(){tween2.start()}, this);
 	
 	if(firstTween){
+		var tween1=game.add.tween(sprite).to( { y:500}, 2000, Phaser.Easing.Linear.None)
+		.to({y:100},2000,Phaser.Easing.Linear.None);
+
 		tween1.start()
 		this.tweenTimer = game.time.create();
-	
-		this.tweenTimer.loop(15000,function(){this.addTween(this.currentBoss)}, this);
+		
+		this.tweenTimer.loop(10000,function(){this.addTween(this.currentBoss)}, this);
 		this.tweenTimer.start();
 
 	}
 	else{
-		console.log('removed tween');
+		
 		game.tweens.removeAll();
-		var randomNumber=game.rnd.integerInRange(1,10);
+		var randomNumber=game.rnd.integerInRange(3,3);
 		switch(randomNumber){
 			case 1:
-				 tween=game.add.tween(sprite.body).to( { x:0}, 2000, Phaser.Easing.Linear.None,false,1000)
-				.to({x:400},2000,Phaser.Easing.Linear.None,false,1000)
-				.to({x:200},2000,Phaser.Easing.Linear.None,false,1000)
+			console.log('tween'+ randomNumber);
+				 tween=game.add.tween(sprite).to( { y:200}, 1000, Phaser.Easing.Linear.None)
+				.to({x:600},500,Phaser.Easing.Linear.None,false,500)
+				.to({x:0},1000,Phaser.Easing.Linear.None,false,300)
+				.to({x:600},1000,Phaser.Easing.Linear.None,false,300)
+				.to({x:0},1000,Phaser.Easing.Linear.None,false,300)
+				.to({x:600},1000,Phaser.Easing.Linear.None,false,300)
+				.to({x:game.width/2},1000,Phaser.Easing.Linear.None,false)
+				.to({y:100},500,Phaser.Easing.Linear.None,false,500)
 				.start();
 
 				break;
 
 			case 2:
-				 tween=game.add.tween(sprite.body).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
-				.to({y:400},2000,Phaser.Easing.Linear.None,false,1000)
-				.to({y:0},2000,Phaser.Easing.Linear.None,false,1000)
+			console.log('tween'+ randomNumber);
+				 tween=game.add.tween(sprite).to( { y:-100}, 1000, Phaser.Easing.Linear.None,false,500)
+				.to({y:600},1000,Phaser.Easing.Linear.None,false,500)
+				.to({x:0},1000,Phaser.Easing.Linear.None,false,500)
+				.to({y:100},1000,Phaser.Easing.Linear.None,false,0)
+				.to({x:game.width/2},500,Phaser.Easing.Linear.None,false,500)
 				.start();
 
 				break;
 
-			default:
-				 tween=game.add.tween(sprite.body).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
-				.to({y:300},2000,Phaser.Easing.Linear.None,false,1000)
-				.to({y:0},2000,Phaser.Easing.Linear.None,false,1000)
+			case 3:
+				console.log('tween'+ randomNumber);
+				tween=game.add.tween(sprite).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
+				.to({y:700},2000,Phaser.Easing.Linear.None,false,1000)
+				.to({y:100},2000,Phaser.Easing.Linear.None,false,1000)
 				.start();
 
-				tween=game.add.tween(sprite.body).to( {x:50}, 2000, Phaser.Easing.Linear.None,false,1000)
+				tween=game.add.tween(sprite).to( {x:-10}, 2000, Phaser.Easing.Linear.None,false,1000)
 				.to({x:300},2000,Phaser.Easing.Linear.None,false,1000)
-				.to({x:200},2000,Phaser.Easing.Linear.None,false,1000)
+				.to({x:game.width/2},2000,Phaser.Easing.Linear.None,false,1000)
 				.start();
+				break;
+
+			case 4:
+				console.log('tween'+ randomNumber);
+				tween=game.add.tween(sprite).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
+				.to({y:300},1000,Phaser.Easing.Linear.None,false,500)
+				.to({y:600},1000,Phaser.Easing.Linear.None,false,500)
+				.to({y:300},1000,Phaser.Easing.Linear.None,false,500)
+				.to({y:100},1000,Phaser.Easing.Linear.None,false,500)
+				.start();
+
+				tween=game.add.tween(sprite).to( {x:game.width/2}, 2000, Phaser.Easing.Linear.None,false,1000)
+				.to({x:600},1000,Phaser.Easing.Linear.None,false,500)
+				.to({x:game.width/2},1000,Phaser.Easing.Linear.None,false,500)
+				.to({x:0},1000,Phaser.Easing.Linear.None,false,500)
+				.to({x:game.width/2},1000,Phaser.Easing.Linear.None,false,500)
+				.start();
+				break;
+
+			default:
+				console.log('boss tween out of range');
 				break;
 
 
@@ -375,11 +407,11 @@ addTween: function(sprite,firstTween){
 update: function(){
 	if(this.state.bossFight){
 		if(this.currentBoss.alive && this.state.player.sprite.alive){
-		//	console.log(	this.currentBoss.health);
 			
+
 		}else{
 			this.state.bossFight=false;
-			this.tweenTimer.destroy;
+			this.tweenTimer.destroy();
 			game.tweens.removeAll();
 
 			if(this.state.player.sprite.alive){
@@ -446,7 +478,7 @@ score+=bullet.damage;
 explode: function(enemy) {
   // first get an explosion from the pool
   var emitter = this.state.explosionPool[this.state.currentExplosion];
-  //console.log(this.state.currentExplosion);
+
   // place the emitter position at the enemy's position via Point.copyFrom
   emitter.position.copyFrom(enemy.position);
   emitter.start(false, 500, 40, 10);

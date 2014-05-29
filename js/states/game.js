@@ -36,6 +36,7 @@ preload: function(){
 	this.enemy.preload();
 	this.powerUp.preload();
 	game.load.image('player_bullet', 'assets/player_bullet.png');
+	game.load.image('player_bullet_fast', 'assets/player_bullet_fast.png');
 	game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
 	game.load.image('background', 'assets/background.png');
 	game.load.image('background_layer_2', 'assets/background_layer_2.png');
@@ -44,7 +45,9 @@ preload: function(){
 	game.load.image('explosion2', 'assets/explosion2.png');
   //   game.load.spritesheet('bird', 'assets/birdsheet.png',34,24);
  	  game.load.image('start_game_button','assets/start_game_button.png');
+ 	  game.load.image('restart_game_button','assets/restart_game_button.png');
  	  game.load.image('window', 'assets/menu/window.png');
+ 	    game.load.image('menu_button', 'assets/menu_button.png');
   //   game.load.image('pipe-bot','assets/pipe-bot.png');
   //    game.load.image('scoreWall','assets/scoreWall.png');
   //   game.load.audio('jump', 'assets/jump.ogg'); 
@@ -56,6 +59,7 @@ create: function() {
 	//start physics
 	this.currentExplosion=0;
 	this.spawners=[];
+	this.explosionPool=[];
 	this.bossFight=false;
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.world.setBounds(0, -100, 600, 900);
@@ -137,7 +141,7 @@ create: function() {
 
 	//score 
 	this.types=this.weapon.getAllTypes();
-	console.log(this.types);
+
 	this.hud.enabled=true;
 	this.hud.create();
 
@@ -185,7 +189,7 @@ render: function(){
  
   
     // pipes.forEachAlive(renderBody,this);
-     // this.enemies.forEachAlive(this.renderBody,this);
+      this.enemies.forEachAlive(this.renderBody,this);
      // this.game.debug.body(this.player.sprite);
 
 },
@@ -209,7 +213,7 @@ addEnemy: function(type){
 	
 
 	this.enemy.addEnemy(type);
-	console.log('added enemy')
+	
 	
 },
 addEnemyFormation: function(){
@@ -219,12 +223,11 @@ this.enemy.addEnemyFormation(game.rnd.integerInRange(2, 8), game.rnd.integerInRa
 
 addSpawner: function(){
 	var timer;
-	if(this.spawners.length>1){
+	if(this.spawners.length>10){
 		this.addBoss();
 	}else{
-		this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
-		console.log('spawner added');
-		console.log(this.spawners.length);
+		this.spawners.push(timer=game.time.events.loop(4500-score/2, function(){this.addEnemy()}, this));
+		
 
 
 	}
@@ -232,7 +235,7 @@ addSpawner: function(){
 },
 
 addBoss: function(){
-	console.log('adding boss');
+
 	this.spawners.forEach(function(timerEvent){
 		timerEvent.timer.remove(timerEvent);
 	});
@@ -243,7 +246,7 @@ addBoss: function(){
 },
 
 afterBattleMenu: function(){
-	console.log('menu');
+	
 	this.credits=Math.round(parseInt(localStorage.getItem('credits'))+(score/2));
 
 	
@@ -251,20 +254,37 @@ afterBattleMenu: function(){
 	
 	this.menu=game.add.sprite(game.width/2,game.height/2,'window');
 	this.menu.anchor.setTo(0.5,0.5);
-	this.finalScore=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y,'Score :'+ score,{fontSize:'32px',fill:'#ffffff'});
-	this.creditsAwarded=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y+30,'Credits won: '+Math.round(score/2),{fontSize:'32px',fill:'#ffffff'});
+	this.finalScore=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y,'Score :'+ score,{fontSize:'32px',fill:'#c1bcbc'});
+	this.creditsAwarded=game.add.text(this.menu.x-this.menu.width/2+20,this.menu.y+30,'Credits won: '+Math.round(score/2),{fontSize:'32px',fill:'#c1bcbc'});
 
-	this.button=game.add.sprite(this.menu.x,this.menu.y+this.menu.width/2,'start_game_button');
-	this.button.anchor.setTo(0.5,0.5);
-	this.button.inputEnabled=true;
-	this.button.events.onInputDown.add(function(){
+	this.menu_button=game.add.sprite(this.menu.x,this.menu.y+this.menu.width/2+50,'menu_button');
+	this.menu_button.anchor.setTo(0.5,0.5);
+	this.menu_button.inputEnabled=true;
+	this.menu_button.events.onInputDown.add(function(){
 
-	  game.add.tween(this.button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.restart_game_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	   game.add.tween(this.menu_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.menu).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.finalScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.creditsAwarded).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	this.timer = game.time.create();
-	console.log(this.timer);
+	
+	this.timer.add(2000,function(){	game.state.start('menu');}, this);
+	this.timer.start();	
+	},this);
+
+	this.restart_game_button=game.add.sprite(this.menu.x,this.menu.y+this.menu.width/2,'restart_game_button');
+	this.restart_game_button.anchor.setTo(0.5,0.5);
+	this.restart_game_button.inputEnabled=true;
+	this.restart_game_button.events.onInputDown.add(function(){
+
+	  game.add.tween(this.restart_game_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	   game.add.tween(this.menu_button).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.menu).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.finalScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	  game.add.tween(this.creditsAwarded).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+	this.timer = game.time.create();
+	
 	this.timer.add(2000,function(){	game.state.start('game');}, this);
 	this.timer.start();	
 	},this);
