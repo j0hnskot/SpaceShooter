@@ -12,11 +12,7 @@ Hud = function (game){
 
 Hud.prototype={
 
-// preload: function(){
-    
 
-
-// },
 
 create : function(){
 	this.state=game.state.getCurrentState();
@@ -29,8 +25,9 @@ if(game.state.current==='game' && this.enabled){
 	this.shieldText=game.add.text(216,game.height-40,'Shield: '+this.state.player.powerUp.shield,{fontSize:'32px',fill:'#ffffff'});
 	this.shieldText.alpha=0.5;
 
-	scoreText = game.add.text(200, 16, 'Score: 0', { fontSize: '32px', fill: '#ffffff' });
+	scoreText = game.add.text(game.width/2, 16, 'Score: 0', { fontSize: '32px', fill: '#ffffff' });
 	scoreText.alpha=0.5;
+	scoreText.anchor.set(0.5);
 	//fps
 	  game.time.advancedTiming = true;
    		this.fpsText = game.add.text(
@@ -57,8 +54,15 @@ update: function(){
 
 updateHealth: function(){
 	if(this.enabled){
-		this.healthText.text='Health: '+this.state.player.sprite.health;
-		this.shieldText.text='Shield: '+this.state.player.powerUp.shield;
+
+		var health=this.state.player.sprite.health;
+		var shield=this.state.player.powerUp.shield;
+		if(health<0){health=0};
+		if(shield<0){shield=0}
+
+
+		this.healthText.text='Health: '+health;
+		this.shieldText.text='Shield: '+shield;
 	}
 },
  

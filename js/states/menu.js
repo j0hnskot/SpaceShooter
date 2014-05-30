@@ -3,8 +3,10 @@ var menu_state= function(game){
 this.menu_button;
 this.shop_button
 this.shop=new Shop();
+this.credits=new Credits();
 this.menu_objects;
 this.titleImage;
+this.music;
 }
 
 
@@ -19,6 +21,8 @@ preload: function(){
 
 
 create: function(){
+	
+	
 
 if(localStorage.getItem('spaceShooter.firstRun')===null){
 	localStorage.setItem('spaceShooter.firstRun','true');
@@ -32,9 +36,7 @@ if(localStorage.getItem('spaceShooter.firstRun')=='true'){
 	localStorage.setItem('equippedWeapon','typeZero');
 	localStorage.setItem('credits','0')
 	localStorage.setItem('dateCreated',new Date())
-	console.log('first run');
-}else{
-	console.log(localStorage);	
+	
 }
 
 
@@ -49,7 +51,7 @@ this.menu_objects=game.add.group();
 this.titleImage=game.add.sprite(game.width/2,game.height/2-300,'title');
 this.titleImage.anchor.set(0.5);
 this.menu_objects.add(this.titleImage);
-this.start_button = game.add.button(game.width/2,game.height/2, 'start_game_button', this.startGame,this.button);
+this.start_button = game.add.button(game.width/2,game.height/2, 'start_game_button', this.startGame,this);
  this.start_button.anchor.setTo(0.5,0.5);
 
  this.menu_objects.add(this.start_button);
@@ -59,22 +61,57 @@ this.start_button = game.add.button(game.width/2,game.height/2, 'start_game_butt
  this.shop_button.anchor.setTo(0.5,0.5);
   this.menu_objects.add(this.shop_button);
 
+  this.credits_button = game.add.button(game.width/2,game.height/2+200, 'credits_button'
+ 					, this.showCredits,this);
+ this.credits_button.anchor.setTo(0.5,0.5);
+  this.menu_objects.add(this.credits_button);
+
+
 this.shop.create();
+this.credits.create();
+
+this.music = game.add.audio('menu_music',1,true);
+
+
+
+this.music.play();
+	
+	
 },
 
 startGame : function(){
-	game.state.start('game');
+	
+	
+	game.add.tween(this.music).to( { volume:0 }, 300, Phaser.Easing.Linear.None,true);
+	
+ 		var timer = game.time.create();
+	
+		 timer.add(500,function(){	game.state.start('game');}, this);
+		timer.start();
+
+
+
+
 },
 
-startMenu: function(){
+shutdown: function(){
+	game.sound.remove(this.music);
+
 
 },
 
 showShop: function(){
 
 	this.menu_objects.setAll('visible',false);
-	console.log(this.menu_objects);
+
 	this.shop.showShop();
+},
+
+showCredits: function(){
+
+	this.menu_objects.setAll('visible',false);
+	
+	this.credits.show();
 },
 
 };

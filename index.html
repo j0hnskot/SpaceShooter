@@ -3,7 +3,7 @@
 <head> 
 	<meta charset="UTF-8" />
     <title>Space shooter with the phaser engine</title>
-	<script type="text/javascript" src="js/lib/phaser.js"></script>
+	<script type="text/javascript" src="js/lib/phaser.min.js"></script>
 	<script type="text/javascript" src="js/enemy.js"></script>
 	<script type="text/javascript" src="js/powerup.js"></script>
 	<script type="text/javascript" src="js/player.js"></script>
@@ -13,7 +13,8 @@
 	<script type="text/javascript" src="js/states/menu.js"></script>
 	<script type="text/javascript" src="js/states/game.js"></script>
 	<script type="text/javascript" src="js/states/shop.js"></script>
-	<script type="text/javascript" src="js/states/afterbattle.js"></script>
+	<script type="text/javascript" src="js/states/credits.js"></script>
+
     
     <style type="text/css">
 
@@ -28,15 +29,17 @@
 var background;
 var scoreText;
 var score=0;
+var menu_music;
+var preloadSprite=null;
 
 var game = new Phaser.Game(480, 800, Phaser.CANVAS, '',  {preload: preload, create: create});
 
 function preload(){
-var preloadSprite=null;
+
 var text;	
 		game.scale.setShowAll();
     game.scale.setScreenSize();
-   // var loadSprite=game.add.sprite(0,0,'load');
+  
    game.load.image('load','assets/load.png');
    game.load.onFileComplete.add(function(q){
    	if(preloadSprite==null){
@@ -45,22 +48,25 @@ var text;
    	text=game.add.text(game.width/2,game.height/2+100,'Loading..',{fontSize:'32px',fill:'#ffffff'});
    	text.anchor.set(0.5);
    }
-  	console.log(preloadSprite);
-  	//preloadSprite=game.add.image(0,0,'load')
+  	
+
    	preloadSprite.width=q*4;
    	});
-  	game.load.onLoadComplete.add(function(){
-  		preloadSprite.kill()
-  		text.kill();
-  	})
+  	
     
  
- //   this.shop.preload();
+
+ 	game.load.audio('shoot', 'assets/sound/Laser1.wav');
+	game.load.audio('game_music_1', 'assets/sound/game_music_1.ogg');
+	game.load.audio('gameover', 'assets/sound/gameover.ogg');
+	game.load.audio('menu_music','assets/sound/menu_music.ogg');
+	game.load.audio('explosion','assets/sound/explosion2.wav');
+
     game.load.image('powerup', 'assets/powerup.png');
     game.load.image('window','assets/menu/window.png');
   	game.load.image('close_button','assets/menu/close_button.png');
-	game.load.image('play_button','assets/play_button.png');
 	game.load.image('shop_button','assets/shop_button.png');
+	game.load.image('credits_button','assets/credits_button.png');
 	game.load.image('buy_button','assets/buy_button.png');
 	game.load.image('equip_button','assets/equip_button.png');
 	game.load.image('equipped_button','assets/equipped_button.png');
@@ -82,7 +88,6 @@ var text;
 	game.load.image('player_ship', 'assets/spaceship.png');
 	game.load.image('shield', 'assets/shield.png');
 	game.load.image('invicibility', 'assets/invicibility.png');
-	game.load.audio('shoot', 'assets/sound/Laser1.wav');
 	game.load.image('lowHealth', 'assets/lowHealth.png');
    	game.load.image('enemy_ship', 'assets/enemy_ship.png');
 	game.load.image('enemy_ship_2', 'assets/enemy_ship_2.png');
@@ -96,13 +101,28 @@ var text;
 	game.load.image('back_button','assets/back_button.png');
 	game.load.image('title','assets/title.png')
 
+
 	
 }
 function create(){
+menu_music=game.add.audio('menu_music');
+
+
+var timer = game.time.create();
+	 timer.loop(500,isDecoded, this);
+		timer.start();
 game.state.add('menu', menu_state); 
 game.state.add('game', game_state); 
 
-game.state.start('menu');	
+//game.state.start('menu');	
+}
+
+function isDecoded(){
+	if(menu_music.isDecoded){
+			preloadSprite.kill()
+		game.state.start('menu');
+
+	}
 }
 
 

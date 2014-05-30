@@ -23,14 +23,14 @@ Weapon = function (type){
 			break;
 
 	}
- // console.log(this);
+
 
 }
 
 Weapon.prototype={
 
 getAllTypes: function(){
-//this.listOfTypes={name:['default','typeOne','typeTwo'],rateOfFire:[11,11,12]};
+
 this.listOfTypes=['typeZero','typeOne','typeTwo'];
 
 return this.listOfTypes;
@@ -50,8 +50,8 @@ this.ammunition_type='bullet';
 
 typeOne: function(){
 	this.rateOfFire=300;
-	this.damage=1;
-	this.cost=10;
+	this.damage=2;
+	this.cost=1000;
 	this.key='typeOne';
 	this.bullet_velocity=400;
 	this.ammunition_type='bullet';
@@ -59,14 +59,12 @@ typeOne: function(){
 
 typeTwo: function(){
 	this.rateOfFire=120;
-	this.damage=2;
-	this.cost=20;
+	this.damage=1;
+	this.cost=5000;
 	this.key='typeTwo';
-	this.bullet_velocity=250;
+	this.bullet_velocity=280;
 	this.ammunition_type='bullet';
 },
 
 };
 
-// Weapon.prototype = Object.create(null);
-// Weapon.prototype.constructor = Weapon;

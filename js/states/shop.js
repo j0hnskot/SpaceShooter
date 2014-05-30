@@ -17,11 +17,7 @@ this.credits
 
 Shop.prototype={
 
-// preload: function(){
-// 		game.scale.setShowAll();
-//     game.scale.setScreenSize();
-  	
-// },
+
 
 
 
@@ -105,7 +101,7 @@ closeMenu : function(){
 
 },
 buy: function(){
-	console.log(this.buy_button.cost);
+	
 	var credits=parseInt(localStorage.getItem('credits'));
 	if(this.buy_button.cost<=credits){
 	localStorage.setItem('got'+this.buy_button.type,'true');
@@ -126,7 +122,7 @@ buy: function(){
 },
 equip: function(){
 localStorage.setItem('equippedWeapon',this.equip_button.type);
-console.log('equiped');
+
 
 this.equip_button.visible=false;
 this.equipped_button.visible=true;
@@ -155,21 +151,19 @@ var state=game.state.getCurrentState();
 		this.sprite.damage=this.weapon.damage;
 		this.sprite.inputEnabled=true;
 		this.sprite.events.onInputDown.add(this.description, this);
-		console.log(this.sprite.rateOfFire);
+		
 		// game.add.button(150+((i-1)*100),50, 'play_button', this.actionOnClick,this.button);
  		this.sprite.anchor.setTo(0.5,0.5);
-		// console.log(this.types[i]);
-		// console.log(i);
-		// this.sprite.visible=false;
+		
 		this.shop_objects.add(this.sprite);
-		console.log(this.weapon.rateOfFire);
+	
 	}
 
 },
 
 description: function(item){
 	
-	console.log(item.rateOfFire);
+	
 	this.weaponNameText.text='Weapon: '+ item.type;
 	this.rateOfFireText.text='Rate of fire: '+ item.rateOfFire;
 
@@ -186,7 +180,7 @@ description: function(item){
 		this.equip_button.visible=false;
 		this.equipped_button.visible=false;
 
-		console.log(localStorage.getItem('got'+item.type));
+	
 	}else{
 		this.buy_button.visible=false;
 		this.equipped_button.visible=false;
@@ -206,9 +200,7 @@ description: function(item){
 		}
 		
 		
-		console.log(item.type);
-		console.log(localStorage.getItem('got'+item.type));
-		console.log('owned');
+		
 	}
 
 

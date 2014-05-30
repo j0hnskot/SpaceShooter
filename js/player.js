@@ -42,7 +42,7 @@ create: function(){
 	this.sprite.anchor.set(0.5);
 	
 	this.sprite.alive=true;
-	this.sprite.health=10;
+	this.sprite.health=20;
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.body.setSize(this.sprite.width,this.sprite.height,0,this.sprite.height/4);
 	this.shoot_sound = game.add.audio('shoot',0.1);
@@ -56,7 +56,7 @@ create: function(){
 	this.invicibility.anchor.set(0.5);
 	this.invicibility.alpha=0;
 	this.sprite.addChild(this.invicibility);
-	console.log(this.invicibility);
+	
 
 },
 update: function(){
@@ -110,26 +110,21 @@ shoot: function(){
 // },
 
 dead: function(){
-	console.log('died');
+
 	this.state.invisible_line.kill();
 	this.shield.kill();
 	this.state.spawners.forEach(function(timerEvent){
 		timerEvent.timer.remove(timerEvent);
-	//	console.log(yolo);
+
 	})
+	game.add.tween(this.state.music).to( { volume:0 }, 2000, Phaser.Easing.Linear.None,true);
+	this.state.gameoverSound.play();
+
 
 	this.state.spawners=[];
-	console.log(this.state.spawners.length);
+	
 	this.explode();
-	// this.state.emitter.on=false;
-	// this.state.emitter.x = this.sprite.x;
- //    this.state.emitter.y = this.sprite.y;
-
- //    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
- //    //  The second gives each particle a 2000ms lifespan
- //    //  The third is ignored when using burst/explode mode
- //    //  The final parameter (10) is how many particles will be emitted in this single burst
- //    this.state.emitter.start(false, 500, 40, 10);
+	
     this.timer = game.time.create();
 	
 	this.timer.add(2000,this.state.afterBattleMenu, this);
@@ -146,6 +141,7 @@ explode: function() {
   // when it reaches the length of the pool array
   this.state.currentExplosion = 
   				Phaser.Math.wrap(this.state.currentExplosion + 1, 0, this.state.explosionPool.length);
+   this.state.explosionSound.play();
 },
 
  damaged: function(player,bullet){
@@ -154,17 +150,15 @@ explode: function() {
 		if(this.powerUp.shield>0){
 			if(this.powerUp.shield>=bullet.damage){
 				this.powerUp.shield-=bullet.damage;
-				console.log('shield');
-				console.log(this.powerUp.shield);
+				
 			}else{
 				player.damage(bullet.damage-this.powerUp.shield);
 
-				console.log('shield');
-				console.log(this.powerUp.shield);
+				
 
 				this.powerUp.shield=0;
 				
-				console.log('shield ended');
+				
 
 			}
 			if(this.powerUp.shield==0){this.removeShield();}
@@ -178,10 +172,7 @@ explode: function() {
 		}else{
 			if(player.health<5){
 					this.gotLowHealth();
-					console.log('q');
-				}else{
-					console.log('no low health');
-					console.log(player.health);
+					
 				}
 		}
 
@@ -202,12 +193,11 @@ touched: function(player,enemy){
 		if(this.powerUp.shield>0){
 
 			this.powerUp.shield-=1;
-			console.log('shield touched');
-			console.log(this.powerUp.shield);
+		
 			if(this.powerUp.shield==0){this.removeShield();};
 
 		}else{
-			console.log('no shield');
+			
 			player.damage(1); 
 		}
 		this.state.hud.updateHealth();
@@ -220,14 +210,14 @@ touched: function(player,enemy){
 },
 
 gotShield: function(){
-	console.log('called gotshield');
+	
 		if(this.shield.alpha==0){
 			game.add.tween(this.shield).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None,true);
 		}
 },
 
 removeShield: function(){
-	console.log('called removeShield');
+	
 	if(this.shield.alpha==1){
 			game.add.tween(this.shield).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None,true);
 		}
@@ -248,13 +238,11 @@ removeInvicibility: function(){
 },
 
 gotLowHealth: function(){
-	console.log('got low health');
-	console.log(this.lowHealthTween);
-	console.log(this.lowHealthTween._paused);
+	
 	if(this.lowHealthTween._paused){
-		console.log('resumed');
+	
 		this.lowHealthTween.resume();
-		console.log(this.lowHealthTween);
+		
 	}else{
 		this.lowHealthTween.loop();
 		this.lowHealthTween.start();

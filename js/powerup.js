@@ -18,7 +18,7 @@ Powerup.prototype={
 
 create : function(){
 	this.state=game.state.getCurrentState();
-	this.timer=game.time.events.loop(4000, this.addRandom, this);
+	this.timer=game.time.events.loop(10000, this.addRandom, this);
 },
 
 update: function(){
@@ -59,7 +59,7 @@ apply :function(player,powerUp){
 		case 1:
 			this.state.player.powerUp.invicibility=true;
 			duration=5000;
-			console.log('invicibility');
+			
 			type='invicibility';
 			this.state.player.gotInvicibility();
 			
@@ -67,7 +67,7 @@ apply :function(player,powerUp){
 		case 2:
 			this.state.player.powerUp.rateOfFire+=-150;
 			duration=5000;
-			console.log('increased fire rate');
+			
 			type='rateOfFire';
 			amount=150;
 			break;
@@ -75,7 +75,7 @@ apply :function(player,powerUp){
 
 			this.state.player.powerUp.shield+=10;
 			duration=5000;
-			console.log('shielded');
+			
 			type='shield';
 			this.state.player.gotShield();
 			this.state.hud.updateHealth();
@@ -85,7 +85,7 @@ apply :function(player,powerUp){
 
 			this.state.player.sprite.health+=5;
 			
-			console.log('health');
+		
 			
 			this.state.player.noLowHealth();
 			this.state.hud.updateHealth();
@@ -93,23 +93,20 @@ apply :function(player,powerUp){
 		
 	}
 	game.time.events.add(duration,function(){this.remove(type,amount)},this)
-	console.log(this);
+	
 	powerUp.kill();
 	
 },
 
 remove: function(type,amount){
-	console.log('removed power Up')
-	console.log(type);
-	console.log(amount);
+
 	if(type=='invicibility'){this.state.player.powerUp.invicibility=false;
 								this.state.player.removeInvicibility();}
 	if(type=='rateOfFire'){
-		console.log(this.state.player.powerUp.rateOfFire);
+		
 		this.state.player.powerUp.rateOfFire+=amount;
 
-		console.log('removing fire rate');
-		console.log(this.state.player.powerUp.rateOfFire);
+		
 	}
 	
 	

@@ -27,27 +27,21 @@ this.explosionPool=[];
 this.newHighScore;
 this.previousHighScore;
 this.bossWarning;
+this.music;
 
 }
 
 game_state.prototype={
 preload: function(){
 
-	// game.scale.setShowAll();
-	// game.scale.setScreenSize();
-	// this.player.preload();
-	// this.enemy.preload();
-	// this.powerUp.preload();
 	
-  //   game.load.image('pipe-bot','assets/pipe-bot.png');
-  //    game.load.image('scoreWall','assets/scoreWall.png');
-  //   game.load.audio('jump', 'assets/jump.ogg'); 
 
 },
 
 
 create: function() {
 	//start physics
+	this.music=null;
 	this.currentExplosion=0;
 	this.spawners=[];
 	this.explosionPool=[];
@@ -98,40 +92,28 @@ create: function() {
 
 	//create enemy bullet group
 	this.enemy_bullets=game.add.group();
-	// enemy_bullets.enableBody=true;
-	// enemy_bullets.createMultiple(200,'');
 	
 	//create effects for firing ,damage and death
 
 	for (var e = 0; e < 10; e++) {
 		var emitter = game.add.emitter(0, 0, 10);
-		/* ... your emitter setup here ... */
+	
 		emitter.makeParticles(['explosion0','explosion1','explosion2'],0,10);
 		emitter.gravity=0;
 
-		//emitter.lifespan=2000;
+	
 		emitter.minRotation = 0;
 		emitter.setAlpha(0.1, 0.1)
 		emitter.maxRotation = 0;
 		emitter.maxParticleSpeed=1;
 		this.explosionPool.push(emitter);
 	}
-	// this.emitter = game.add.emitter(300,200, 100);
- //    this.emitter.makeParticles(['explosion0','explosion1','explosion2']);
- //    this.emitter.gravity=0;
-    
- //    this.emitter.lifespan=2000;
- //    this.emitter.minRotation = 0;
- //      this.emitter.setAlpha(0.1, 0.1)
- //    this.emitter.maxRotation = 0;
- // 	this.emitter.maxParticleSpeed=1;
-   
-       // this.emitter.start(false, 1000, 50, 30);
 
-	//create sounds for firing ,damage and death
 
-	//create music
-
+	this.music = game.add.audio('game_music_1');
+	this.music.play('',0,0.5,true);
+	this.explosionSound=game.add.audio('explosion',0.1);
+	this.gameoverSound = game.add.audio('gameover',1,true);
 	//score 
 	this.types=this.weapon.getAllTypes();
 
@@ -210,7 +192,7 @@ renderBody: function(obj){
 },
 
 startSpawningEnemies: function(){
-	console.log('started spawning');
+	
 	this.spawners=[];
 	this.spawners.push(timer=game.time.events.loop(4500, function(){this.addEnemy()}, this));
 		this.spawners.push(timer=game.time.events.loop(12000, function(){this.addEnemyFormation()}, this));
@@ -298,8 +280,9 @@ afterBattleMenu: function(){
 	  game.add.tween(this.finalScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.creditsAwarded).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	 if(newRecord){game.add.tween(this.newHighScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true)};
-	this.timer = game.time.create();
 	
+	this.timer = game.time.create();
+
 	this.timer.add(2000,function(){	game.state.start('menu');}, this);
 	this.timer.start();	
 	},this);
@@ -316,13 +299,14 @@ afterBattleMenu: function(){
 	  game.add.tween(this.finalScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	  game.add.tween(this.creditsAwarded).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
 	 if(newRecord){game.add.tween(this.newHighScore).to( { alpha: 0}, 1000, Phaser.Easing.Linear.None, true)};
+	 
 	this.timer = game.time.create();
 	
 	this.timer.add(2000,function(){	game.state.start('game');}, this);
 	this.timer.start();	
 	},this);
 
-
+ 
 
 },
 
@@ -330,8 +314,11 @@ afterBattleMenu: function(){
 
 
 
-removeLife: function(){
-
+shutdown: function(){
+	this.music.stop();
+	this.gameoverSound.stop();
+	game.sound.remove(this.music);
+	game.sound.remove(this.gameoverSound);
 
 
 },

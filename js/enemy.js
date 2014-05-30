@@ -9,10 +9,7 @@ var Enemy = function (game){
 
 Enemy.prototype={
 
-// preload: function(){
-   
 
-// },
 
 create: function(){
 	this.state=game.state.getCurrentState();
@@ -125,7 +122,7 @@ selectEnemy: function(number){
 	switch (randomNumber){
 		case 1:
 		selectedEnemy={
-			health:10,
+			health:1,
 			weapon:'typeTwo',
 			key:'enemy_ship',
 			velocity: randomVelocity,
@@ -165,7 +162,7 @@ selectEnemy: function(number){
 		case 3:
 		selectedEnemy={
 			health:3,
-			weapon:'typeZero',
+			weapon:'typeOne',
 			key:'enemy_ship_3',
 			velocity:randomVelocity,
 			mountPoints:{
@@ -206,7 +203,7 @@ mountPoints:{
 
 		case 5:
 		selectedEnemy={
-			health:3,
+			health:6,
 			weapon:'typeZero',
 			key:'enemy_ship_5',
 			velocity:randomVelocity,
@@ -226,24 +223,7 @@ mountPoints:{
 		}
 		break;
 		default:
-		selectedEnemy={
-			health:3,
-			weapon:'typeZero',
-			key:'enemy_ship_2',
-			velocity:randomVelocity,
-	mountPoints:{
-				ammount:2,
-				point1:{
-					x:-10,
-					y:0,
-				},
-				point2:{
-					x:10,
-					y:0,
-				},
-			},
-
-		}
+				
 		break;
 
 	}
@@ -259,7 +239,7 @@ selectBoss: function(){
 	switch (randomNumber){
 		case 1:
 		selectedEnemy={
-			health:100,
+			health:500,
 			weapon:'typeTwo',
 			key:'boss_1',
 			velocity:0,
@@ -282,7 +262,7 @@ selectBoss: function(){
 
 		break;
 		default:
-			console.log('boss index out of range');
+		
 		break;
 
 	}
@@ -325,7 +305,7 @@ addTween: function(sprite,firstTween){
 		var randomNumber=game.rnd.integerInRange(3,3);
 		switch(randomNumber){
 			case 1:
-			console.log('tween'+ randomNumber);
+		
 				 tween=game.add.tween(sprite).to( { y:200}, 1000, Phaser.Easing.Linear.None)
 				.to({x:600},500,Phaser.Easing.Linear.None,false,500)
 				.to({x:0},1000,Phaser.Easing.Linear.None,false,300)
@@ -339,7 +319,7 @@ addTween: function(sprite,firstTween){
 				break;
 
 			case 2:
-			console.log('tween'+ randomNumber);
+			
 				 tween=game.add.tween(sprite).to( { y:-100}, 1000, Phaser.Easing.Linear.None,false,500)
 				.to({y:600},1000,Phaser.Easing.Linear.None,false,500)
 				.to({x:0},1000,Phaser.Easing.Linear.None,false,500)
@@ -350,7 +330,7 @@ addTween: function(sprite,firstTween){
 				break;
 
 			case 3:
-				console.log('tween'+ randomNumber);
+			
 				tween=game.add.tween(sprite).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
 				.to({y:700},2000,Phaser.Easing.Linear.None,false,1000)
 				.to({y:100},2000,Phaser.Easing.Linear.None,false,1000)
@@ -363,7 +343,7 @@ addTween: function(sprite,firstTween){
 				break;
 
 			case 4:
-				console.log('tween'+ randomNumber);
+			
 				tween=game.add.tween(sprite).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
 				.to({y:300},1000,Phaser.Easing.Linear.None,false,500)
 				.to({y:600},1000,Phaser.Easing.Linear.None,false,500)
@@ -380,7 +360,7 @@ addTween: function(sprite,firstTween){
 				break;
 
 			default:
-				console.log('boss tween out of range');
+			
 				break;
 
 
@@ -388,14 +368,6 @@ addTween: function(sprite,firstTween){
 		
 	}
 
-	//tween1.onComplete(tween2.start());
-	
-
-	  // tween2=game.add.tween(sprite.body).to( { y:500}, 2000, Phaser.Easing.Linear.None)
-	  // .start();
-
-	// tween.chain(tween2=game.add.tween(sprite.body).to( { x:0}, 2000, Phaser.Easing.Linear.None, true));
-	 //tween.chain(tween3=game.add.tween(sprite.body).to( { x:480}, 2000, Phaser.Easing.Linear.None, true,0,0,true));
 	
 },
 
@@ -481,6 +453,8 @@ explode: function(enemy) {
   // when it reaches the length of the pool array
   this.state.currentExplosion = 
   				Phaser.Math.wrap(this.state.currentExplosion + 1, 0, this.state.explosionPool.length);
+  this.state.explosionSound.play();
+
 },
  
 touched: function(player,enemy){
