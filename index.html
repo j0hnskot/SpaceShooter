@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-51529543-1', 'j0hnskot.github.io');
+  ga('send', 'pageview');
+
+</script>
+        <script type="text/javascript" src="lib/phaser.min.js"></script>
+         <script type="text/javascript" src="lib/game.js"></script>
+   
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Spaceshooter by j0hnskot</title>
+    <script type="text/javascript">
+var background;
+var scoreText;
+var score=0;
+var menu_music;
+var preloadSprite=null;
+
+var game = new Phaser.Game(480, 800, Phaser.CANVAS, 'game',  {preload: preload, create: create});
+
+function preload(){
+
+var text; 
+    game.scale.setShowAll();
+    game.scale.setScreenSize();
+  
+   game.load.image('load','assets/load.png');
+   game.load.onFileComplete.add(function(q){
+    if(preloadSprite==null){
+    preloadSprite=game.add.image(game.width/2,game.height/2,'load');
+    preloadSprite.anchor.set(0.5);
+    text=game.add.text(game.width/2,game.height/2+100,'Loading..',{fontSize:'32px',fill:'#ffffff'});
+    text.anchor.set(0.5);
+   }
+    
+
+    preloadSprite.width=q*4;
+    });
+    
+    
+ 
+
+  game.load.audio('shoot', 'assets/sound/laser1.wav');
+  game.load.audio('game_music_1', 'assets/sound/game_music_1.ogg');
+  game.load.audio('gameover', 'assets/sound/gameover.ogg');
+  game.load.audio('menu_music','assets/sound/menu_music.ogg');
+  game.load.audio('explosion','assets/sound/explosion2.wav');
+
+    game.load.image('powerup', 'assets/powerup.png');
+    game.load.image('window','assets/menu/window.png');
+    game.load.image('close_button','assets/menu/close_button.png');
+  game.load.image('shop_button','assets/shop_button.png');
+  game.load.image('credits_button','assets/credits_button.png');
+  game.load.image('buy_button','assets/buy_button.png');
+  game.load.image('equip_button','assets/equip_button.png');
+  game.load.image('equipped_button','assets/equipped_button.png');
+  game.load.image('typeZero','assets/typeZero.png');
+  game.load.image('typeOne','assets/typeOne.png');
+  game.load.image('typeTwo','assets/typeTwo.png');
+    game.load.image('player_bullet', 'assets/player_bullet.png');
+  game.load.image('player_bullet_fast', 'assets/player_bullet_fast.png');
+  game.load.image('enemy_bullet', 'assets/enemy_bullet.png');
+  game.load.image('background', 'assets/background.png');
+  game.load.image('background_layer_2', 'assets/background_layer_2.png');
+  game.load.image('explosion0', 'assets/explosion0.png');
+  game.load.image('explosion1', 'assets/explosion1.png');
+  game.load.image('explosion2', 'assets/explosion2.png');
+  game.load.image('start_game_button','assets/start_game_button.png');
+  game.load.image('restart_game_button','assets/restart_game_button.png');
+  game.load.image('window', 'assets/menu/window.png');
+  game.load.image('menu_button', 'assets/menu_button.png');
+  game.load.image('player_ship', 'assets/spaceship.png');
+  game.load.image('shield', 'assets/shield.png');
+  game.load.image('invicibility', 'assets/invicibility.png');
+  game.load.image('lowHealth', 'assets/lowHealth.png');
+    game.load.image('enemy_ship', 'assets/enemy_ship.png');
+  game.load.image('enemy_ship_2', 'assets/enemy_ship_2.png');
+  game.load.image('enemy_ship_3', 'assets/enemy_ship_3.png');
+  game.load.image('enemy_ship_4', 'assets/enemy_ship_4.png');
+  game.load.image('enemy_ship_5', 'assets/enemy_ship_5.png');
+  game.load.image('boss_1', 'assets/boss_1.png');
+    game.load.image('menu_background_layer_1','assets/menu/menu_background_layer_1.png');
+    game.load.image('menu_background_layer_2','assets/menu/menu_background_layer_2.png');
+  game.load.image('start_game_button','assets/start_game_button.png');
+  game.load.image('back_button','assets/back_button.png');
+  game.load.image('title','assets/title.png')
+
+
+  
+}
+function create(){
+menu_music=game.add.audio('menu_music');
+
+
+var timer = game.time.create();
+   timer.loop(500,isDecoded, this);
+    timer.start();
+game.state.add('menu', menu_state); 
+game.state.add('game', game_state); 
+
+//game.state.start('menu'); 
+}
+
+function isDecoded(){
+  if(menu_music.isDecoded){
+      preloadSprite.kill()
+    game.state.start('menu');
+
+  }
+}
+
+
+
+
+</script>
+
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Spaceshooter</h1>
+          <h2>A space shooter using phaser</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/j0hnskot/SpaceShooter/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/j0hnskot/SpaceShooter/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/j0hnskot/SpaceShooter" id="view-on-github" class="button"><span>View on GitHub</span></a>
+
+        </section>
+
+        <hr>
+<a href="https://twitter.com/share" class="twitter-share-button" data-text="A space shooting game by @j0hnskot" data-size="large">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<a href="https://twitter.com/j0hnskot" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @j0hnskot</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+
+<br>
+<br>
+<br>
+        <section id="main_content">
+
+
+<p>This is my first game i released in public as a part of my effort to join the ideology of 
+    <a href="http://www.onegameamonth.com/">#onegamepermonth</a></p>
+<p> The game is a simple shooter, with a few enemies and a boss. Nothing special or complete here!<br>
+  But i learned so much by doing this! </p>
+
+<div id='game'></div>
+
+        </section>
+
+        <footer>
+          Spaceshooter is maintained by <a href="https://github.com/j0hnskot">j0hnskot</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
