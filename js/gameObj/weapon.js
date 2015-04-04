@@ -10,7 +10,7 @@ Weapon = function (type){
 	}else{
 		this.type=type;
 	}
-	
+
 	switch(this.type){
 		case 'typeZero':
 			this.typeZero();

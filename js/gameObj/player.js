@@ -4,7 +4,7 @@ var Player = function (game){
 
 	this.x=game.width/2 ;
 	this.y=game.height/2;
-	this.lastTimeFired=0;	
+	this.lastTimeFired=0;
 	this.shooting=false;
 	this.invicibility;
  	this.weapon;
@@ -13,8 +13,8 @@ var Player = function (game){
  	this.shield;
  	this.lowHealth;
  	this.lowHealthTween;
-	
-	
+
+
  }
 Player.prototype={
 
@@ -40,7 +40,7 @@ create: function(){
 	this.weapon=new Weapon(localStorage.getItem('equippedWeapon'));
 	this.sprite=game.add.sprite(this.x,this.y,'player_ship');
 	this.sprite.anchor.set(0.5);
-	
+
 	this.sprite.alive=true;
 	this.sprite.health=20;
 	game.physics.arcade.enable(this.sprite);
@@ -56,7 +56,8 @@ create: function(){
 	this.invicibility.anchor.set(0.5);
 	this.invicibility.alpha=0;
 	this.sprite.addChild(this.invicibility);
-	
+	this.sprite.damage = this.damage;
+
 
 },
 update: function(){
@@ -64,21 +65,21 @@ update: function(){
 		if(this.shooting){
 				this.shoot();
 			}
-	 
+
 		if (game.physics.arcade.distanceToPointer(this.sprite, game.input.activePointer) >20)
 	    {
 	        //  Make the object seek to the active pointer (mouse or touch).
 	        game.physics.arcade.moveToPointer(this.sprite, 300);
 	        // this.state.invisible_line.x=this.sprite.x;
-	        
-	      	
+
+
 	    }
 	    else
 	    {
 	        //  Otherwise turn off velocity because we're close enough to the pointer
 	        this.sprite.body.velocity.set(0);
 	       	//this.state.invisible_line.x=this.sprite.x;
-	      
+
 	    }
 	}
 },
@@ -86,9 +87,9 @@ update: function(){
 shoot: function(){
 	//this.shooting=true;
 	var bullet;
-	if (this.sprite.alive && 
+	if (this.sprite.alive &&
 		this.lastTimeFired < game.time.now - (this.weapon.rateOfFire+this.powerUp.rateOfFire)) {
-		
+
 		if(this.state.player_bullets.getFirstDead()){
 			bullet=this.state.player_bullets.getFirstDead();
 			bullet.resetProperties(this.sprite.x,this.sprite.y-82,this.weapon,'player');
@@ -96,8 +97,8 @@ shoot: function(){
 			bullet=new Bullet(game,this.sprite.x,this.sprite.y-82,this.weapon,'player')
 		}
 
-		
-		
+
+
 		bullet.body.velocity.y*=-1;
 		this.lastTimeFired=game.time.now;
 	this.shoot_sound.play();
@@ -122,14 +123,14 @@ dead: function(){
 
 
 	this.state.spawners=[];
-	
+
 	this.explode();
-	
+
     this.timer = game.time.create();
-	
+
 	this.timer.add(2000,this.state.afterBattleMenu, this);
 	this.timer.start();
-  
+
 },
 explode: function() {
   // first get an explosion from the pool
@@ -139,31 +140,42 @@ explode: function() {
   emitter.start(false, 500, 40, 10);
   // increase currentExplosion by 1, ensuring it wraps around back to 0
   // when it reaches the length of the pool array
-  this.state.currentExplosion = 
+  this.state.currentExplosion =
   				Phaser.Math.wrap(this.state.currentExplosion + 1, 0, this.state.explosionPool.length);
    this.state.explosionSound.play();
 },
 
+
+	damage: function(damage) {
+
+		this.health -= damage;
+		if(this.health <= 0) this.kill();
+
+
+	},
+
  damaged: function(player,bullet){
-	bullet.kill();
+ 	bullet.kill();
 	if(!this.powerUp.invicibility){
 		if(this.powerUp.shield>0){
 			if(this.powerUp.shield>=bullet.damage){
 				this.powerUp.shield-=bullet.damage;
-				
+
 			}else{
 				player.damage(bullet.damage-this.powerUp.shield);
 
-				
+
 
 				this.powerUp.shield=0;
-				
-				
+
+
 
 			}
 			if(this.powerUp.shield==0){this.removeShield();}
 		}else{
-			player.damage(bullet.damage); 
+
+			player.damage(bullet.damage);
+
 		}
 
 		if (!player.alive){
@@ -172,7 +184,7 @@ explode: function() {
 		}else{
 			if(player.health<5){
 					this.gotLowHealth();
-					
+
 				}
 		}
 
@@ -181,24 +193,24 @@ explode: function() {
 },
 
 touched: function(player,enemy){
-	
+
 	//damage enemy for spesific amount
 	enemy.damage(1);
 	if(enemy.alive==false){
 		this.state.enemy.explode(enemy);
 	}
-	//damage player for specific amount 
+	//damage player for specific amount
 	//player.damage(1)
 	if(!this.powerUp.invicibility){
 		if(this.powerUp.shield>0){
 
 			this.powerUp.shield-=1;
-		
+
 			if(this.powerUp.shield==0){this.removeShield();};
 
 		}else{
-			
-			player.damage(1); 
+
+			player.damage(1);
 		}
 		this.state.hud.updateHealth();
 		if (!player.alive){
@@ -210,14 +222,14 @@ touched: function(player,enemy){
 },
 
 gotShield: function(){
-	
+
 		if(this.shield.alpha==0){
 			game.add.tween(this.shield).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None,true);
 		}
 },
 
 removeShield: function(){
-	
+
 	if(this.shield.alpha==1){
 			game.add.tween(this.shield).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None,true);
 		}
@@ -231,18 +243,18 @@ gotInvicibility: function(){
 },
 
 removeInvicibility: function(){
-	
+
 	if(this.invicibility.alpha==0.5){
 			game.add.tween(this.invicibility).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None,true);
 		}
 },
 
 gotLowHealth: function(){
-	
+
 	if(this.lowHealthTween._paused){
-	
+
 		this.lowHealthTween.resume();
-		
+
 	}else{
 		this.lowHealthTween.loop();
 		this.lowHealthTween.start();

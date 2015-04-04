@@ -21,6 +21,14 @@ createEnemy : function(){
 
 
 },
+
+damage: function(damage) {
+
+		this.health -= damage;
+		if(this.health <= 0) this.kill();
+
+},
+
 addEnemyFormation: function(number,velocity){
 	randomNumber=game.rnd.integerInRange(1, this.numberOfEnemies);
 	randomY=game.rnd.integerInRange(100,300 );
@@ -34,7 +42,7 @@ addEnemyFormation: function(number,velocity){
 		side=1;
 	}
 	for(var i=1;i<=number;i++){
-		game.time.events.add(1000+(i*500+velocity), 
+		game.time.events.add(1000+(i*500+velocity),
 			function(){this.addEnemy(randomNumber,randomX,randomY,velocity,true)}, this);
 		//this.addEnemy(randomNumber,randomX+((30*i)*side),randomY,velocity,true);
 
@@ -50,7 +58,7 @@ addEnemy: function(type,x,y,velocity,formation){
 
 	}else if(typeof(type)==='undefined'){
 		this.selectedEnemy=this.selectEnemy();
-		this.x=((Math.random() * 400)+1); 
+		this.x=((Math.random() * 400)+1);
 		this.y=-100;
 
 	}else{
@@ -58,30 +66,30 @@ addEnemy: function(type,x,y,velocity,formation){
 		this.x=x;
 		this.y=y;
 	}
-	
-	
-		
-	
-	
+
+
+
+
+
 	if(this.state.enemies.countDead()==0){
-		
+
 		this.sprite=game.add.sprite(this.x,this.y,this.selectedEnemy.key);
-		
+
 	}else{
-		
+
 		this.sprite=this.state.enemies.getFirstDead();
 		this.sprite.loadTexture(this.selectedEnemy.key);
 		this.sprite.reset(this.x,this.y);
-	
+
 	}
-	
+
 	this.sprite.anchor.set(0.5);
-	
+
 	this.sprite.alive=true;
 	this.sprite.health=this.selectedEnemy.health;
 	this.sprite.lastTimeFired=0;
 	this.sprite.mountPoints=this.selectedEnemy.mountPoints;
-	
+
 
 	game.physics.arcade.enable(this.sprite);
 	this.sprite.checkWorldBounds=true;
@@ -89,34 +97,35 @@ addEnemy: function(type,x,y,velocity,formation){
 	this.sprite.body.setSize(this.sprite.width/1.3,this.sprite.height/1.5,0,-this.sprite.height/6.5)
 	this.sprite.body.velocity.y=this.selectedEnemy.velocity;
 	this.sprite.weapon=new Weapon(this.selectedEnemy.weapon);
-	
+
 	if(this.selectedEnemy.isBoss){
 		this.currentBoss=this.sprite;
 		this.state.bossFight=true;
 		this.addTween(this.currentBoss,true);
-		 
-		
+
+
 	}
 	if(formation==true){
 		this.sprite.body.velocity.y=velocity;
 		game.physics.arcade.moveToXY(this.sprite,-x,this.sprite.y+100, velocity);
-	
+
 	}
+	this.sprite.damage = this.damage;
 	this.state.enemies.add(this.sprite);
-	
+
 },
 
 selectEnemy: function(number){
-	
+
 	var randomNumber;
 	if(typeof(number)==='undefined'){
 
 		randomNumber=game.rnd.integerInRange(1, this.numberOfEnemies);
-		
+
 	}else{
 		randomNumber=number;
 	}
-	
+
 	var selectedEnemy;
 	var randomVelocity=game.rnd.integerInRange(100, 200);
 	switch (randomNumber){
@@ -132,7 +141,7 @@ selectEnemy: function(number){
 					x:0,
 					y:0,
 				},
-				
+
 			},
 
 
@@ -150,14 +159,14 @@ selectEnemy: function(number){
 					x:0,
 					y:0,
 				},
-				
+
 			},
 
 
 		}
 		break;
 
-		
+
 
 		case 3:
 		selectedEnemy={
@@ -223,11 +232,11 @@ mountPoints:{
 		}
 		break;
 		default:
-				
+
 		break;
 
 	}
-	
+
 	return selectedEnemy;
 
 },
@@ -262,7 +271,7 @@ selectBoss: function(){
 
 		break;
 		default:
-		
+
 		break;
 
 	}
@@ -281,31 +290,31 @@ addTween: function(sprite,firstTween){
 	// var tween1=game.add.tween(sprite).to( { y:300}, 2000, Phaser.Easing.Linear.None)
 	//  .to({y:100},2000,Phaser.Easing.Linear.None);
 
-	 
+
 	// var tween2=game.add.tween(sprite.body).to( { x:100}, 2000, Phaser.Easing.Linear.None,false,1000)
 	// 	.to({x:300},2000,Phaser.Easing.Linear.None,false,1000)
 	// 	.to({x:200},2000,Phaser.Easing.Linear.None,false,1000);
-	
+
 	//tween1.onComplete.add(function(){tween2.start()}, this);
-	
+
 	if(firstTween){
 		var tween1=game.add.tween(sprite).to( { y:500}, 2000, Phaser.Easing.Linear.None)
 		.to({y:100},2000,Phaser.Easing.Linear.None);
 
 		tween1.start()
 		this.tweenTimer = game.time.create();
-		
+
 		this.tweenTimer.loop(10000,function(){this.addTween(this.currentBoss)}, this);
 		this.tweenTimer.start();
 
 	}
 	else{
-		
+
 		game.tweens.removeAll();
 		var randomNumber=game.rnd.integerInRange(3,3);
 		switch(randomNumber){
 			case 1:
-		
+
 				 tween=game.add.tween(sprite).to( { y:200}, 1000, Phaser.Easing.Linear.None)
 				.to({x:600},500,Phaser.Easing.Linear.None,false,500)
 				.to({x:0},1000,Phaser.Easing.Linear.None,false,300)
@@ -319,7 +328,7 @@ addTween: function(sprite,firstTween){
 				break;
 
 			case 2:
-			
+
 				 tween=game.add.tween(sprite).to( { y:-100}, 1000, Phaser.Easing.Linear.None,false,500)
 				.to({y:600},1000,Phaser.Easing.Linear.None,false,500)
 				.to({x:0},1000,Phaser.Easing.Linear.None,false,500)
@@ -330,7 +339,7 @@ addTween: function(sprite,firstTween){
 				break;
 
 			case 3:
-			
+
 				tween=game.add.tween(sprite).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
 				.to({y:700},2000,Phaser.Easing.Linear.None,false,1000)
 				.to({y:100},2000,Phaser.Easing.Linear.None,false,1000)
@@ -343,7 +352,7 @@ addTween: function(sprite,firstTween){
 				break;
 
 			case 4:
-			
+
 				tween=game.add.tween(sprite).to( { y:-100}, 2000, Phaser.Easing.Linear.None,false,1000)
 				.to({y:300},1000,Phaser.Easing.Linear.None,false,500)
 				.to({y:600},1000,Phaser.Easing.Linear.None,false,500)
@@ -360,21 +369,21 @@ addTween: function(sprite,firstTween){
 				break;
 
 			default:
-			
+
 				break;
 
 
 		}
-		
+
 	}
 
-	
+
 },
 
 update: function(){
 	if(this.state.bossFight){
 		if(this.currentBoss.alive && this.state.player.sprite.alive){
-			
+
 
 		}else{
 			this.state.bossFight=false;
@@ -386,7 +395,7 @@ update: function(){
 			}
 		}
 	}
-	
+
 },
 
 shoot: function(x,enemy){
@@ -396,7 +405,7 @@ shoot: function(x,enemy){
 	if (enemy.alive && enemy.lastTimeFired < game.time.now - enemy.weapon.rateOfFire) {
 		for(var i=1;i<=enemy.mountPoints.ammount;i++){
 			currentPoint=enemy.mountPoints['point'+i];
-			
+
 			if(this.state.enemy_bullets.getFirstDead()){
 
 				bullet=this.state.enemy_bullets.getFirstDead();
@@ -406,8 +415,8 @@ shoot: function(x,enemy){
 			}
 		}
 
-		
-	
+
+
 
 	//	var bullet=new Bullet(game,enemy.x,enemy.y+59,enemy.weapon,'enemy')
 		enemy.lastTimeFired=game.time.now;
@@ -416,13 +425,13 @@ shoot: function(x,enemy){
 },
 
 damaged: function(enemy,bullet){
-	
+
 //increase score
 
 score+=bullet.damage;
 	scoreText.text='Score: '+score;
 	bullet.kill();
-	
+
 	//damage enemy
 	enemy.damage(bullet.damage);
 	if(!enemy.alive){
@@ -437,7 +446,7 @@ score+=bullet.damage;
  //    //  The final parameter (10) is how many particles will be emitted in this single burst
  //    this.state.emitter.start(false, 500, 40, 10);
 	}
-	
+
 
 
 },
@@ -451,24 +460,24 @@ explode: function(enemy) {
   emitter.start(false, 500, 40, 10);
   // increase currentExplosion by 1, ensuring it wraps around back to 0
   // when it reaches the length of the pool array
-  this.state.currentExplosion = 
+  this.state.currentExplosion =
   				Phaser.Math.wrap(this.state.currentExplosion + 1, 0, this.state.explosionPool.length);
   this.state.explosionSound.play();
 
 },
- 
+
 touched: function(player,enemy){
-	
+
 	//damage enemy for spesific amount
 	enemy.damage(1);
-	//damage player for specific amount 
+	//damage player for specific amount
 	player.damage(1)
 	this.state.hud.updateHealth();
 	if (!player.alive){
 		this.state.player.dead();
 	}
 
-	
+
 
 },
 
@@ -476,7 +485,7 @@ killAll:function(){
 	while(this.state.enemies.getFirstAlive()){
 		var enemy=this.state.enemies.getFirstAlive();
 		enemy.kill();
-		
+
 		this.explode(enemy);
 
 	}

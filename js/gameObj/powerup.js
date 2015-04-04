@@ -5,14 +5,14 @@ Powerup = function (game){
 	this.timer;
 	this.state;
 
-	
+
 
  }
 
 Powerup.prototype={
 
 // preload: function(){
-   
+
 
 // },
 
@@ -37,8 +37,8 @@ this.y=-10;
 		//game.add.sprite(this.x,this.y,'powerup');
 	//}else{
 	this.sprite.reset(this.x,this.y);
-		
-	
+
+
 	this.sprite.loadTexture('powerup');
 	this.sprite.anchor.set(0.5);
 
@@ -59,15 +59,15 @@ apply :function(player,powerUp){
 		case 1:
 			this.state.player.powerUp.invicibility=true;
 			duration=5000;
-			
+
 			type='invicibility';
 			this.state.player.gotInvicibility();
-			
+
 			break;
 		case 2:
 			this.state.player.powerUp.rateOfFire+=-150;
 			duration=5000;
-			
+
 			type='rateOfFire';
 			amount=150;
 			break;
@@ -75,7 +75,7 @@ apply :function(player,powerUp){
 
 			this.state.player.powerUp.shield+=10;
 			duration=5000;
-			
+
 			type='shield';
 			this.state.player.gotShield();
 			this.state.hud.updateHealth();
@@ -84,18 +84,18 @@ apply :function(player,powerUp){
 		case 4:
 
 			this.state.player.sprite.health+=5;
-			
-		
-			
+
+
+
 			this.state.player.noLowHealth();
 			this.state.hud.updateHealth();
 			break;
-		
+
 	}
 	game.time.events.add(duration,function(){this.remove(type,amount)},this)
-	
+
 	powerUp.kill();
-	
+
 },
 
 remove: function(type,amount){
@@ -103,15 +103,15 @@ remove: function(type,amount){
 	if(type=='invicibility'){this.state.player.powerUp.invicibility=false;
 								this.state.player.removeInvicibility();}
 	if(type=='rateOfFire'){
-		
+
 		this.state.player.powerUp.rateOfFire+=amount;
 
-		
+
 	}
-	
-	
+
+
 },
- 
+
 
 
 };
